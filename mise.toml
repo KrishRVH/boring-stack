@@ -1,0 +1,313 @@
+[tools]
+go = "1.26.4"
+gofumpt = "0.10.0"
+golangci-lint = "2.12.2"
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.4.0"
+
+[env]
+_.file = ".env"
+GOTOOLCHAIN = "local"
+APP = "boring-stack"
+HTMX_VERSION = "2.0.10"
+HTMX_SSE_VERSION = "2.2.4"
+ALPINE_VERSION = "3.15.12"
+TEMPL_VERSION = "v0.3.1020"
+TAILWIND_VERSION = "v4.3.1"
+TAILWIND_LINUX_X64_SHA256 = "2526d063ba03b71f9a3ea7d5cee14f0aec147f117f222d5adc97b1d736d45999"
+SQLC_VERSION = "v1.31.1"
+GOOSE_VERSION = "v3.27.1"
+NATS_IMAGE = "nats:2.14.2-alpine"
+POSTGRES_IMAGE = "postgres:18.4-alpine"
+POSTGRES_PORT = "5432"
+NATS_PORT = "4222"
+NATS_HTTP_PORT = "8222"
+
+[tasks.default]
+description = "List project tasks."
+run = "mise tasks ls"
+
+[tasks.tasks]
+description = "List project tasks."
+run = "mise tasks ls"
+
+[tasks.install]
+description = "Install the pinned toolchain, Go modules, and local browser assets."
+run = """
+mise install
+mise run tools
+mise run vendor-js
+"""
+
+[tasks.setup]
+description = "Alias for install."
+run = "mise run install"
+
+[tasks.doctor]
+description = "Check local prerequisites and explain exact fixes."
+run = "./scripts/doctor.sh"
+
+[tasks.tools]
+description = "Download Go modules and check pinned codegen tools."
+run = """
+go mod download
+gofumpt -version
+golangci-lint version --short
+govulncheck -version
+mise run tailwind
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION version
+go run github.com/sqlc-dev/sqlc/cmd/sqlc@$SQLC_VERSION version
+go run github.com/pressly/goose/v3/cmd/goose@$GOOSE_VERSION -version
+"""
+
+[tasks.tailwind]
+description = "Install the pinned Tailwind standalone binary."
+sources = ["scripts/install_tailwind.sh", "mise.toml"]
+outputs = ["bin/tailwindcss"]
+run = "./scripts/install_tailwind.sh"
+
+[tasks.vendor-js]
+description = "Download the pinned HTMX, SSE, and Alpine browser bundles."
+sources = ["scripts/vendor_browser_js.sh", "mise.toml"]
+outputs = [
+  "web/assets/vendor/htmx.min.js",
+  "web/assets/vendor/sse.min.js",
+  "web/assets/vendor/alpine.min.js",
+]
+run = "./scripts/vendor_browser_js.sh"
+
+[tasks.up]
+description = "Start Postgres and NATS with Docker Compose."
+run = "./scripts/up.sh"
+
+[tasks.wait-db]
+description = "Wait until local Postgres accepts connections."
+run = "./scripts/wait_for_postgres.sh"
+
+[tasks.migrate]
+description = "Run Goose app migrations and River internal migrations."
+run = "./scripts/migrate.sh"
+
+[tasks.generate]
+description = "Regenerate sqlc query code and templ components."
+run = """
+go run github.com/sqlc-dev/sqlc/cmd/sqlc@$SQLC_VERSION generate
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION generate
+"""
+
+[tasks.css]
+description = "Build minified Tailwind CSS."
+run = """
+mise run tailwind
+./bin/tailwindcss -i ./web/assets/css/input.css -o ./web/assets/css/app.css --minify
+"""
+
+[tasks.regenerate]
+description = "Regenerate sqlc, templ, and checked-in CSS."
+run = """
+mise run generate
+mise run css
+"""
+
+[tasks.dev-css]
+description = "Watch Tailwind CSS during UI work."
+run = """
+mise run tailwind
+./bin/tailwindcss -i ./web/assets/css/input.css -o ./web/assets/css/app.css --watch
+"""
+
+[tasks.dev]
+description = "Generate, build CSS, and run the local server."
+run = """
+mise run generate
+mise run css
+go run ./cmd/server
+"""
+
+[tasks.first-run]
+description = "Set up tools, start services, migrate, and run the app."
+run = "./scripts/first_run.sh"
+
+[tasks.run]
+description = "Alias for dev."
+run = "mise run dev"
+
+[tasks.start]
+description = "Alias for first-run."
+run = "mise run first-run"
+
+[tasks.build]
+description = "Build a local Linux binary into ./bin."
+run = """
+mise run generate
+mise run css
+CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o bin/$APP ./cmd/server
+"""
+
+[tasks.docker-build]
+description = "Build the distroless container image."
+run = "./scripts/docker_build.sh"
+
+[tasks.test]
+description = "Run Go tests."
+run = "mise run go:test"
+
+[tasks.test-db]
+description = "Run opt-in DB-backed integration tests against TEST_DATABASE_URL."
+run = """
+if [ -z "${TEST_DATABASE_URL:-}" ]; then
+  echo "TEST_DATABASE_URL is required. Point it at an isolated test database." >&2
+  exit 1
+fi
+go test -p 1 ./cmd/migrate ./internal/server -count=1
+"""
+
+[tasks.fmt]
+description = "Format Go and templ files."
+run = """
+mise run go:fmt
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt .
+"""
+
+[tasks."fmt:check"]
+description = "Check Go and templ formatting."
+run = """
+mise run go:fmt:check
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt -fail .
+"""
+
+[tasks.lint]
+description = "Run the lightweight local Go static checks."
+run = "mise run go:lint"
+
+[tasks.verify]
+description = "Check generated files, checked-in assets, and tests."
+run = """
+./scripts/check_generated_drift.sh
+mise run test
+"""
+
+[tasks.check]
+description = "Run the normal local quality gate."
+run = """
+mise run fmt:check
+mise run lint
+mise run verify
+"""
+
+[tasks.ci]
+description = "Run the extended local quality gate."
+run = """
+mise run check
+mise run vuln
+mise run test-race
+"""
+
+[tasks."go:install"]
+description = "Download Go module dependencies."
+run = "go mod download"
+
+[tasks."go:fmt"]
+description = "Format non-generated Go source."
+run = """
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp.all"' EXIT
+
+if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git ls-files --cached --others --exclude-standard '*.go' > "$tmp.all"
+else
+  find . -type d \\( -name .git -o -name .gstack -o -name vendor \\) -prune -o -type f -name '*.go' -print > "$tmp.all"
+fi
+
+grep -Ev '(^internal/db/(db|models|querier|.*\\.sql)\\.go$|^internal/ui/.*_templ\\.go$)' "$tmp.all" > "$tmp" || true
+
+if [ -s "$tmp" ]; then
+  xargs gofumpt -w < "$tmp"
+fi
+"""
+
+[tasks."go:fmt:check"]
+description = "Check non-generated Go source formatting."
+run = """
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp.all"' EXIT
+
+if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git ls-files --cached --others --exclude-standard '*.go' > "$tmp.all"
+else
+  find . -type d \\( -name .git -o -name .gstack -o -name vendor \\) -prune -o -type f -name '*.go' -print > "$tmp.all"
+fi
+
+grep -Ev '(^internal/db/(db|models|querier|.*\\.sql)\\.go$|^internal/ui/.*_templ\\.go$)' "$tmp.all" > "$tmp" || true
+
+if [ ! -s "$tmp" ]; then
+  exit 0
+fi
+
+files="$(xargs gofumpt -l < "$tmp")"
+if [ -n "$files" ]; then
+  printf '%s\n' "$files"
+  exit 1
+fi
+"""
+
+[tasks."go:mod:check"]
+description = "Check Go module tidiness."
+run = "go mod tidy -diff"
+
+[tasks."go:mod:verify"]
+description = "Verify downloaded Go modules."
+run = "go mod verify"
+
+[tasks."go:lint"]
+description = "Run local Go static analysis."
+run = """
+mise run go:mod:check
+mise run go:mod:verify
+go vet ./...
+golangci-lint run ./...
+"""
+
+[tasks."go:test"]
+description = "Run Go tests."
+run = "go test -trimpath -count=1 ./..."
+
+[tasks."go:check"]
+description = "Run Go formatting, linting, and tests."
+run = """
+mise run go:fmt:check
+mise run go:lint
+mise run go:test
+"""
+
+[tasks.vuln]
+description = "Run govulncheck explicitly; kept out of the normal local loop."
+run = "govulncheck -test ./..."
+
+[tasks."test-race"]
+description = "Run Go tests with the race detector."
+run = "go test -trimpath -race -count=1 ./..."
+
+[tasks.cover]
+description = "Run Go tests with a coverage report."
+run = """
+mkdir -p coverage
+go test -trimpath -count=1 -coverpkg=./... -covermode=atomic -coverprofile=coverage/go.out ./...
+go tool cover -func=coverage/go.out
+"""
+
+[tasks.reset-db]
+description = "Remove Docker volumes and start a clean database."
+run = """
+mise run down
+docker volume rm "${APP}_pgdata" 2>/dev/null || true
+mise run up
+mise run migrate
+"""
+
+[tasks.down]
+description = "Stop containers, preserving volumes."
+run = "./scripts/down.sh"
+
+[tasks.clean]
+description = "Remove local build artifacts."
+run = "rm -rf bin tmp dist"

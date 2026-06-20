@@ -1,0 +1,207 @@
+package ui
+
+import (
+	"fmt"
+
+	"github.com/KrishRVH/boring-stack/internal/appmodel"
+)
+
+templ Home(vm appmodel.HomeView) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full bg-slate-950 text-slate-100">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Boring Stack</title>
+			<link rel="stylesheet" href="/assets/css/app.css"/>
+			<script src="/assets/vendor/htmx.min.js"></script>
+			<script src="/assets/vendor/sse.min.js"></script>
+			<script defer src="/assets/vendor/alpine.min.js"></script>
+		</head>
+		<body class="min-h-full bg-slate-950 text-slate-100 antialiased">
+			<main
+				class="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8"
+				hx-ext="sse"
+				sse-connect="/stream"
+			>
+				<div id="stream-updates" class="hidden" aria-hidden="true" sse-swap="snapshot" hx-swap="none"></div>
+				<header class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur">
+					<div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+						<div>
+							<p class="text-sm font-medium uppercase tracking-[0.35em] text-cyan-300">Boring Stack</p>
+							<h1 class="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">templ + sqlc + HTMX</h1>
+							<p class="mt-4 max-w-3xl text-base leading-7 text-slate-300">
+								A deliberately small app that exercises server-rendered components, HTMX requests/SSE, Postgres queries, migrations, jobs, structured logs, embedded assets, and an optional NATS fanout bus.
+							</p>
+						</div>
+						<div class="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+							<p class="font-semibold">Bus: { vm.BusName }</p>
+							<p class="mt-1 text-cyan-100/80">Open two tabs, then add or toggle a todo.</p>
+						</div>
+					</div>
+				</header>
+				<section class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+					<div class="space-y-6">
+						@TodoComposer(vm.FormError)
+						@StatsPanel(vm.Stats, false)
+						@TodosPanel(vm.Todos, false)
+					</div>
+					<div class="space-y-6">
+						@AlpinePanel()
+						@EventsPanel(vm.Events, false)
+						@VersionPanel(vm.Version)
+					</div>
+				</section>
+			</main>
+		</body>
+	</html>
+}
+
+templ TodoComposer(formError string) {
+	<section id="composer-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
+		<h2 class="text-lg font-semibold text-white">Create a todo</h2>
+		<p class="mt-1 text-sm text-slate-400">The form posts plain fields to Go. The response returns server-rendered fragments for HTMX to swap.</p>
+		<form class="mt-4 flex flex-col gap-3 sm:flex-row" method="post" action="/todos" hx-post="/todos" hx-target="#composer-panel" hx-swap="outerHTML">
+			<input
+				class="min-h-12 flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 text-base text-white outline-none ring-cyan-300/40 transition placeholder:text-slate-500 focus:border-cyan-300 focus:ring-4"
+				type="text"
+				name="body"
+				placeholder="Ship the smallest coherent slice"
+				autocomplete="off"
+				maxlength={ fmt.Sprint(appmodel.MaxTodoBodyLength) }
+				required
+			/>
+			<button class="min-h-12 rounded-2xl bg-cyan-300 px-5 font-semibold text-slate-950 transition hover:bg-cyan-200" type="submit">
+				Add
+			</button>
+		</form>
+		if formError != "" {
+			<p class="mt-3 rounded-xl border border-rose-300/20 bg-rose-300/10 px-4 py-2 text-sm text-rose-200">{ formError }</p>
+		}
+	</section>
+}
+
+templ StatsPanel(stats appmodel.Stats, oob bool) {
+	<section id="stats-panel" class="grid grid-cols-3 gap-3" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+		@StatCard("Total", fmt.Sprint(stats.Total))
+		@StatCard("Open", fmt.Sprint(stats.Open()))
+		@StatCard("Done", fmt.Sprint(stats.Done))
+	</section>
+}
+
+templ StatCard(label string, value string) {
+	<div class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
+		<p class="text-sm text-slate-400">{ label }</p>
+		<p class="mt-2 text-3xl font-semibold text-white">{ value }</p>
+	</div>
+}
+
+templ TodosPanel(todos []appmodel.Todo, oob bool) {
+	<section id="todos-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+		<div class="flex items-center justify-between gap-4">
+			<div>
+				<h2 class="text-lg font-semibold text-white">Todos</h2>
+				<p class="mt-1 text-sm text-slate-400">Mutations go through sqlc/pgx and publish one full snapshot event to connected browsers.</p>
+			</div>
+		</div>
+		<div class="mt-5 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10">
+			if len(todos) == 0 {
+				<div class="bg-slate-950/60 p-5 text-sm text-slate-400">No todos yet.</div>
+			}
+			for _, todo := range todos {
+				@TodoRow(todo)
+			}
+		</div>
+	</section>
+}
+
+templ TodoRow(todo appmodel.Todo) {
+	<article class="flex flex-col gap-4 bg-slate-950/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+		<div class="min-w-0">
+			if todo.Done {
+				<p class="break-words text-base font-medium text-slate-400 line-through">{ todo.Body }</p>
+			} else {
+				<p class="break-words text-base font-medium text-white">{ todo.Body }</p>
+			}
+			<p class="mt-1 text-xs text-slate-500">created { shortDateTime(todo.CreatedAt) }</p>
+		</div>
+		<div class="flex shrink-0 gap-2">
+			<button class="rounded-xl border border-white/10 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-300/70 hover:text-cyan-100" type="button" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... }>
+				if todo.Done {
+					Reopen
+				} else {
+					Done
+				}
+			</button>
+			<button class="rounded-xl border border-rose-300/20 px-3 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-300/70 hover:text-rose-100" type="button" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... }>
+				Delete
+			</button>
+		</div>
+	</article>
+}
+
+templ AlpinePanel() {
+	<section id="alpine-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attr("x-data", "{ localClicks: 0 }")... }>
+		<h2 class="text-lg font-semibold text-white">Alpine island</h2>
+		<p class="mt-1 text-sm text-slate-400">Local-only behavior stays in a tiny Alpine component. Server state still flows through HTMX.</p>
+		<div class="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+			<p class="text-sm text-slate-400">Local clicks</p>
+			<p class="mt-2 text-3xl font-semibold text-white" { attr("x-text", "localClicks")... }>0</p>
+			<button class="mt-4 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-200" type="button" { attr("@click", "localClicks++")... }>
+				Increment
+			</button>
+		</div>
+	</section>
+}
+
+templ EventsPanel(events []appmodel.Event, oob bool) {
+	<section id="events-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+		<div class="flex items-start justify-between gap-4">
+			<div>
+				<h2 class="text-lg font-semibold text-white">Live event log</h2>
+				<p class="mt-1 text-sm text-slate-400">Go handlers and River jobs write this table and broadcast a snapshot.</p>
+			</div>
+			<button class="rounded-xl bg-lime-300 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-lime-200" type="button" hx-post="/jobs/snapshot" hx-swap="none">
+				Run job
+			</button>
+		</div>
+		<div class="mt-5 space-y-3">
+			if len(events) == 0 {
+				<p class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm text-slate-400">No events yet.</p>
+			}
+			for _, event := range events {
+				<div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+					<div class="flex items-center justify-between gap-3">
+						<p class="text-sm font-semibold text-cyan-100">{ event.Kind }</p>
+						<p class="text-xs text-slate-500">{ shortTime(event.CreatedAt) }</p>
+					</div>
+					<p class="mt-2 text-sm leading-6 text-slate-300">{ event.Body }</p>
+				</div>
+			}
+		</div>
+	</section>
+}
+
+templ VersionPanel(v appmodel.VersionInfo) {
+	<section class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
+		<h2 class="text-lg font-semibold text-white">Pinned stack</h2>
+		<dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+			@VersionRow("Go", v.Go)
+			@VersionRow("HTMX", v.HTMX)
+			@VersionRow("HTMX SSE", v.HTMXSSE)
+			@VersionRow("Alpine", v.Alpine)
+			@VersionRow("templ", v.Templ)
+			@VersionRow("Tailwind", v.Tailwind)
+			@VersionRow("sqlc", v.SQLC)
+			@VersionRow("pgx", v.PGX)
+			@VersionRow("goose", v.Goose)
+			@VersionRow("River", v.River)
+			@VersionRow("nats.go", v.NATSGo)
+		</dl>
+	</section>
+}
+
+templ VersionRow(name string, value string) {
+	<dt class="text-slate-500">{ name }</dt>
+	<dd class="font-mono text-slate-200">{ value }</dd>
+}

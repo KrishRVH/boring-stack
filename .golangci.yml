@@ -1,0 +1,38 @@
+version: "2"
+
+run:
+  timeout: 3m
+  tests: true
+
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errcheck
+    - errorlint
+    - govet
+    - ineffassign
+    - misspell
+    - nilerr
+    - noctx
+    - revive
+    - staticcheck
+    - unconvert
+    - unused
+    - wastedassign
+  settings:
+    revive:
+      severity: error
+      rules:
+        - name: blank-imports
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: receiver-naming
+        - name: time-naming
+        - name: var-naming
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

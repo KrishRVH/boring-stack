@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@source "../../../internal/**/*.templ";
+@source "../../../internal/**/*.go";
+@source "../../../cmd/**/*.go";
+@source not "../../../internal/db/*.go";
+@source not "../../../internal/ui/*_templ.go";
+@source not "../../../web/assets/css/app.css";
+@source not "../../../web/assets/vendor/**";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+}

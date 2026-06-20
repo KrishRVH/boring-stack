@@ -1,0 +1,33 @@
+name: "${APP:?APP is set by mise.toml. Run: mise run up}"
+
+services:
+  postgres:
+    image: "${POSTGRES_IMAGE:?POSTGRES_IMAGE is set by mise.toml. Run: mise run up}"
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  nats:
+    image: "${NATS_IMAGE:?NATS_IMAGE is set by mise.toml. Run: mise run up}"
+    command: ["--http_port", "8222"]
+    ports:
+      - "127.0.0.1:${NATS_PORT:-4222}:4222"
+      - "127.0.0.1:${NATS_HTTP_PORT:-8222}:8222"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8222/healthz"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  pgdata:
