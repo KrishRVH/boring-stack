@@ -112,11 +112,9 @@ templ TodoComposer(formError string) {
 				<h2 class="text-lg font-semibold text-white">Build queue</h2>
 				<p class="mt-1 text-sm leading-6 text-zinc-400">Plain forms, server validation, sqlc writes, and HTMX fragments.</p>
 			</div>
-			<form method="post" action="/demo/seed" hx-post="/demo/seed" hx-target="#composer-panel" hx-swap="outerHTML">
-				<button class="min-h-10 rounded-md border border-amber-300/40 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:border-amber-200 hover:bg-amber-300/10" type="submit">
-					Seed flow
-				</button>
-			</form>
+			<button class="min-h-10 rounded-md border border-amber-300/40 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:border-amber-200 hover:bg-amber-300/10" type="button" hx-post="/demo/seed" hx-target="#composer-panel" hx-swap="outerHTML">
+				Seed flow
+			</button>
 		</div>
 		<form class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" method="post" action="/todos" hx-post="/todos" hx-target="#composer-panel" hx-swap="outerHTML">
 			<label class="sr-only" for="todo-body">Next app slice</label>
@@ -188,20 +186,16 @@ templ TodoRow(todo appmodel.Todo) {
 			<p class="mt-1 text-xs text-zinc-400">created { shortDateTime(todo.CreatedAt) }</p>
 		</div>
 		<div class="flex shrink-0 gap-2">
-			<form method="post" { attr("action", fmt.Sprintf("/todos/%s/toggle", todo.ID))... }>
-				<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-emerald-300/70 hover:text-emerald-100" type="submit" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... } { attr("aria-label", todoToggleLabel(todo))... }>
-					if todo.Done {
-						Reopen
-					} else {
-						Done
-					}
-				</button>
-			</form>
-			<form method="post" { attr("action", fmt.Sprintf("/todos/%s/delete", todo.ID))... }>
-				<button class="min-h-10 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-medium text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10" type="submit" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... } { attr("aria-label", todoDeleteLabel(todo))... }>
-					Delete
-				</button>
-			</form>
+			<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-emerald-300/70 hover:text-emerald-100" type="button" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... } { attr("aria-label", todoToggleLabel(todo))... }>
+				if todo.Done {
+					Reopen
+				} else {
+					Done
+				}
+			</button>
+			<button class="min-h-10 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-medium text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10" type="button" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... } { attr("aria-label", todoDeleteLabel(todo))... }>
+				Delete
+			</button>
 		</div>
 	</article>
 }
@@ -215,16 +209,12 @@ templ EventsPanel(events []appmodel.Event, oob bool) {
 			</div>
 		</div>
 		<div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-			<form method="post" action="/jobs/snapshot" hx-post="/jobs/snapshot" hx-target="#composer-panel" hx-swap="outerHTML">
-				<button class="min-h-10 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200" type="submit">
-					Run River job
-				</button>
-			</form>
-			<form method="post" action="/demo/pulse" hx-post="/demo/pulse" hx-target="#composer-panel" hx-swap="outerHTML">
-				<button class="min-h-10 w-full rounded-md border border-sky-300/40 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10" type="submit">
-					Broadcast pulse
-				</button>
-			</form>
+			<button class="min-h-10 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200" type="button" hx-post="/jobs/snapshot" hx-target="#composer-panel" hx-swap="outerHTML">
+				Run River job
+			</button>
+			<button class="min-h-10 w-full rounded-md border border-sky-300/40 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10" type="button" hx-post="/demo/pulse" hx-target="#composer-panel" hx-swap="outerHTML">
+				Broadcast pulse
+			</button>
 		</div>
 		<div class="mt-5 space-y-3">
 			if len(events) == 0 {

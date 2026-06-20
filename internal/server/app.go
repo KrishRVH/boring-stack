@@ -89,7 +89,6 @@ func (a *App) routes() {
 	a.mux.HandleFunc("GET /stream", a.stream)
 	a.mux.HandleFunc("POST /todos", a.createTodo)
 	a.mux.HandleFunc("POST /todos/{id}/toggle", a.toggleTodo)
-	a.mux.HandleFunc("POST /todos/{id}/delete", a.deleteTodo)
 	a.mux.HandleFunc("DELETE /todos/{id}", a.deleteTodo)
 	a.mux.HandleFunc("POST /jobs/snapshot", a.enqueueSnapshot)
 	a.mux.HandleFunc("POST /demo/pulse", a.broadcastPulse)
@@ -257,10 +256,6 @@ func (a *App) toggleTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "toggle")
 
-	if !isHTMX(r) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	a.writeSnapshotResponse(w, r)
 }
 
@@ -286,10 +281,6 @@ func (a *App) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "delete")
 
-	if !isHTMX(r) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	a.writeSnapshotResponse(w, r)
 }
 
@@ -324,10 +315,6 @@ func (a *App) enqueueSnapshot(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "job-enqueued")
 
-	if !isHTMX(r) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	a.writeComposerClearResponse(w, r)
 }
 
@@ -339,10 +326,6 @@ func (a *App) broadcastPulse(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "pulse")
 
-	if !isHTMX(r) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	a.writeComposerClearResponse(w, r)
 }
 
@@ -375,10 +358,6 @@ func (a *App) seedShowcase(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "seed")
 
-	if !isHTMX(r) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 	a.writeComposerClearResponse(w, r)
 }
 

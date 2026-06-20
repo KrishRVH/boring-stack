@@ -454,6 +454,7 @@ loop by default, with stricter tools available when the risk is higher.
 ```bash
 mise run tasks          # list available tasks
 mise run install        # install pinned tools, Go modules, and browser assets
+mise run tools          # check pinned codegen and local tooling versions
 mise run doctor         # check local prerequisites and exact fixes
 mise run first-run      # setup, start services, migrate, and run the app
 mise run start          # alias for first-run
@@ -462,6 +463,7 @@ mise run fmt            # format Go and templ files
 mise run fmt:check      # check formatting
 mise run lint           # Go static checks and module verification
 mise run vendor-js      # download pinned HTMX, SSE, and Alpine bundles
+mise run tailwind       # install the pinned Tailwind standalone binary
 mise run up             # start Postgres and NATS
 mise run wait-db        # wait for local Postgres
 mise run migrate        # Goose app migrations plus River schema migrations
@@ -469,13 +471,21 @@ mise run generate       # sqlc plus templ codegen
 mise run css            # Tailwind standalone build
 mise run regenerate     # generate plus CSS
 mise run dev            # regenerate, rebuild CSS, and run server
+mise run dev-css        # watch Tailwind CSS during UI work
+mise run build          # build a local Linux server binary into ./bin
 mise run test           # run Go tests
+mise run test-db        # run opt-in DB-backed integration tests
 mise run verify         # generated drift, asset checksum, and tests
 mise run check          # fmt check, lint, verify
 mise run ci             # check, govulncheck, race tests
+mise run go:check       # Go-only formatting, linting, and tests
+mise run vuln           # run govulncheck explicitly
+mise run test-race      # run Go tests with the race detector
+mise run cover          # write a coverage profile to coverage/go.out
 mise run docker-build   # build distroless image
 mise run down           # stop containers
 mise run reset-db       # remove local Postgres volume and recreate DB
+mise run clean          # remove local build artifacts
 ```
 
 Opt-in DB-backed tests require an isolated database:

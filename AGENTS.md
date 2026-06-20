@@ -50,22 +50,35 @@ Generated files are checked in so `go test ./...` works from a clean copy.
 
 - `mise run tasks`: list available tasks.
 - `mise run install`: install pinned tools, Go modules, and local browser assets.
+- `mise run tools`: check pinned codegen and local tooling versions.
 - `mise run doctor`: check local prerequisites and print exact fixes.
 - `mise run first-run`: set up tools, start services, migrate, and run the app.
 - `mise run fmt`: format Go and templ files.
 - `mise run fmt:check`: check Go and templ formatting.
 - `mise run lint`: run local Go static checks.
+- `mise run vendor-js`: download pinned HTMX, SSE, and Alpine browser bundles.
+- `mise run tailwind`: install the pinned Tailwind standalone binary.
 - `mise run generate`: regenerate sqlc and templ output.
 - `mise run css`: rebuild embedded Tailwind CSS.
 - `mise run regenerate`: regenerate sqlc, templ, and checked-in CSS.
 - `mise run test`: run `go test ./...`.
+- `mise run test-db`: run opt-in DB-backed integration tests against `TEST_DATABASE_URL`.
 - `mise run check`: run the normal local quality gate.
 - `mise run ci`: run the extended local quality gate.
 - `mise run dev`: regenerate, rebuild CSS, and run the server.
+- `mise run dev-css`: watch Tailwind CSS during UI work.
+- `mise run build`: build a local Linux server binary into `./bin`.
 - `mise run up`: start Postgres and NATS.
+- `mise run wait-db`: wait until local Postgres accepts connections.
 - `mise run migrate`: run Goose and River migrations.
 - `mise run verify`: check generated files, checked-in assets, and tests.
-- `TEST_DATABASE_URL=... mise run test-db`: run opt-in DB-backed integration tests against an isolated Postgres database.
+- `mise run vuln`: run govulncheck explicitly.
+- `mise run test-race`: run Go tests with the race detector.
+- `mise run cover`: run Go tests with a coverage report.
+- `mise run docker-build`: build the distroless container image.
+- `mise run down`: stop Docker Compose services.
+- `mise run reset-db`: remove the local Postgres volume and recreate the DB.
+- `mise run clean`: remove local build artifacts.
 
 ## Testing Bias
 
