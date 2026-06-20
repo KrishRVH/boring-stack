@@ -92,18 +92,24 @@ NATS_HTTP_PORT=8223
 The app derives local `DB_URL` and `NATS_URL` defaults from those ports unless
 you set explicit overrides.
 
-## What The Demo Shows
+## What The Showcase Shows
 
-The included app is a small realtime todo and event log.
+The included app is a live stack cockpit. It is intentionally over-featured for
+a starter, because the first screen should prove what this boring stack can do
+without sending you to a slide deck.
 
-- Add, toggle, and delete todos.
-- Open two browser tabs and watch both tabs converge through SSE updates.
-- Click "Run job" to enqueue a River job that writes an event and broadcasts a
-  new server-rendered snapshot.
+- Add, toggle, and delete workflow items backed by Postgres and sqlc.
+- Click `Seed flow` to idempotently add a small app-building workflow.
+- Click `Broadcast pulse` to write an event and fan out a server snapshot.
+- Click `Run River job` to enqueue durable work, write job output, and refresh
+  connected browsers.
+- Use the local Alpine island to change browser-only UI state without touching
+  trusted server state.
+- Open two browser tabs and watch both tabs converge through HTMX SSE updates.
 
-The demo is intentionally small, but it exercises the stack paths most apps need:
-form posts, validation, SQL writes, migrations, background jobs, server-rendered
-partials, HTMX swaps, SSE fanout, checked-in CSS, and embedded static assets.
+The page also includes capability, recipe, request-path, command-loop, runtime,
+and version panels. Those panels are still server-rendered HTML from the same
+templ file, not a separate docs app or frontend build.
 
 ## Stack Choices
 
@@ -304,9 +310,9 @@ without needing loose SQL files on disk.
 River owns durable background jobs. It uses Postgres, which keeps the starter
 from introducing Redis or a separate worker database on day one.
 
-The demo's "Run job" button enqueues a River job. The worker writes an event row
-and publishes a realtime notification. That path demonstrates a common app shape:
-user action, durable job, database side effect, browser update.
+The showcase's `Run River job` button enqueues a River job. The worker writes an
+event row and publishes a realtime notification. That path demonstrates a common
+app shape: user action, durable job, database side effect, browser update.
 
 River owns its own schema through River's migrator. Goose owns the app schema.
 That boundary stays clear.

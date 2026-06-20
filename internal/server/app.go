@@ -89,8 +89,11 @@ func (a *App) routes() {
 	a.mux.HandleFunc("GET /stream", a.stream)
 	a.mux.HandleFunc("POST /todos", a.createTodo)
 	a.mux.HandleFunc("POST /todos/{id}/toggle", a.toggleTodo)
+	a.mux.HandleFunc("POST /todos/{id}/delete", a.deleteTodo)
 	a.mux.HandleFunc("DELETE /todos/{id}", a.deleteTodo)
 	a.mux.HandleFunc("POST /jobs/snapshot", a.enqueueSnapshot)
+	a.mux.HandleFunc("POST /demo/pulse", a.broadcastPulse)
+	a.mux.HandleFunc("POST /demo/seed", a.seedShowcase)
 }
 
 func (a *App) healthz(w http.ResponseWriter, _ *http.Request) {
@@ -254,6 +257,10 @@ func (a *App) toggleTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "toggle")
 
+	if !isHTMX(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 	a.writeSnapshotResponse(w, r)
 }
 
@@ -279,6 +286,10 @@ func (a *App) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "delete")
 
+	if !isHTMX(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 	a.writeSnapshotResponse(w, r)
 }
 
@@ -313,7 +324,83 @@ func (a *App) enqueueSnapshot(w http.ResponseWriter, r *http.Request) {
 	}
 	a.publishChange(r.Context(), "job-enqueued")
 
-	a.writeSnapshotResponse(w, r)
+	if !isHTMX(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	a.writeComposerClearResponse(w, r)
+}
+
+func (a *App) broadcastPulse(w http.ResponseWriter, r *http.Request) {
+	body := fmt.Sprintf("manual pulse over %s bus", a.bus.Name())
+	if _, err := a.q.InsertEvent(r.Context(), db.InsertEventParams{Kind: "pulse", Body: body}); err != nil {
+		a.serverError(w, r, err)
+		return
+	}
+	a.publishChange(r.Context(), "pulse")
+
+	if !isHTMX(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	a.writeComposerClearResponse(w, r)
+}
+
+func (a *App) seedShowcase(w http.ResponseWriter, r *http.Request) {
+	missing := showcaseSeedItems
+
+	err := a.withTx(r.Context(), func(qtx *db.Queries) error {
+		todos, err := qtx.ListTodos(r.Context())
+		if err != nil {
+			return err
+		}
+		missing = missingShowcaseSeedItems(todos)
+
+		for _, item := range missing {
+			if _, err := qtx.CreateTodo(r.Context(), item); err != nil {
+				return err
+			}
+		}
+
+		body := "showcase seed already present"
+		if len(missing) > 0 {
+			body = fmt.Sprintf("seeded %d app-building steps", len(missing))
+		}
+		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: "seed", Body: body})
+		return err
+	})
+	if err != nil {
+		a.serverError(w, r, err)
+		return
+	}
+	a.publishChange(r.Context(), "seed")
+
+	if !isHTMX(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	a.writeComposerClearResponse(w, r)
+}
+
+var showcaseSeedItems = []string{
+	"Model the first happy path",
+	"Render the workflow with templ",
+	"Move the slow step into River",
+}
+
+func missingShowcaseSeedItems(todos []db.Todo) []string {
+	existing := make(map[string]bool, len(todos))
+	for _, todo := range todos {
+		existing[todo.Body] = true
+	}
+
+	missing := make([]string, 0, len(showcaseSeedItems))
+	for _, item := range showcaseSeedItems {
+		if !existing[item] {
+			missing = append(missing, item)
+		}
+	}
+	return missing
 }
 
 func (a *App) publishChange(ctx context.Context, reason string) {
@@ -346,6 +433,13 @@ func (a *App) writeCreateResponse(ctx context.Context, w http.ResponseWriter) er
 func (a *App) writeComposerResponse(ctx context.Context, w http.ResponseWriter, formError string) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return ui.TodoComposer(formError).Render(ctx, w)
+}
+
+func (a *App) writeComposerClearResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := ui.TodoComposer("").Render(r.Context(), w); err != nil {
+		a.serverError(w, r, err)
+	}
 }
 
 func (a *App) writeSnapshotResponse(w http.ResponseWriter, r *http.Request) {

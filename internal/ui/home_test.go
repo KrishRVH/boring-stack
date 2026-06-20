@@ -29,6 +29,10 @@ func TestHomeUsesHTMXSSEAndAlpineAssets(t *testing.T) {
 		`maxlength="280"`,
 		`x-data=`,
 		`x-text=`,
+		`/demo/pulse`,
+		`/demo/seed`,
+		`Capability map`,
+		`Request path`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered home missing %q", want)
@@ -57,6 +61,7 @@ func TestSnapshotPanelsRenderOOBSwaps(t *testing.T) {
 		`hx-swap-oob="outerHTML"`,
 		`hx-post="/todos/todo-1/toggle"`,
 		`hx-delete="/todos/todo-1"`,
+		`hx-post="/demo/pulse"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("snapshot fragments missing %q", want)

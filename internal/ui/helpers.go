@@ -1,9 +1,12 @@
 package ui
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/a-h/templ"
+
+	"github.com/KrishRVH/boring-stack/internal/appmodel"
 )
 
 func attr(key string, value any) templ.Attributes {
@@ -29,4 +32,15 @@ func shortDateTime(t time.Time) string {
 		return ""
 	}
 	return t.Local().Format("Jan 02 15:04:05")
+}
+
+func todoToggleLabel(todo appmodel.Todo) string {
+	if todo.Done {
+		return fmt.Sprintf("Reopen todo: %s", todo.Body)
+	}
+	return fmt.Sprintf("Mark todo done: %s", todo.Body)
+}
+
+func todoDeleteLabel(todo appmodel.Todo) string {
+	return fmt.Sprintf("Delete todo: %s", todo.Body)
 }

@@ -158,6 +158,47 @@ func TestSnapshotJobRequiresRiver(t *testing.T) {
 	assertStatus(t, resp, http.StatusServiceUnavailable)
 }
 
+func TestShowcaseActionsReturnSnapshots(t *testing.T) {
+	app, cleanup := newIntegrationApp(t)
+	defer cleanup()
+
+	pulse := serveHTMX(t, app, http.MethodPost, "/demo/pulse", "")
+	assertStatus(t, pulse, http.StatusOK)
+	assertContains(t, pulse.Body.String(), `id="composer-panel"`)
+	events, err := app.q.ListEvents(context.Background(), 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertEvent(t, events, "manual pulse over memory bus")
+
+	seed := serveHTMX(t, app, http.MethodPost, "/demo/seed", "")
+	assertStatus(t, seed, http.StatusOK)
+	assertContains(t, seed.Body.String(), `id="composer-panel"`)
+	todos, err := app.q.ListTodos(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := countTodoBody(todos, "Model the first happy path"); got != 1 {
+		t.Fatalf("seeded todo count = %d, want 1", got)
+	}
+
+	reseed := serveHTMX(t, app, http.MethodPost, "/demo/seed", "")
+	assertStatus(t, reseed, http.StatusOK)
+	todos, err = app.q.ListTodos(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := countTodoBody(todos, "Model the first happy path"); got != 1 {
+		t.Fatalf("seeded todo count after reseed = %d, want 1", got)
+	}
+	events, err = app.q.ListEvents(context.Background(), 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertEvent(t, events, "seeded 3 app-building steps")
+	assertEvent(t, events, "showcase seed already present")
+}
+
 func newIntegrationApp(t *testing.T) (*App, func()) {
 	t.Helper()
 
@@ -247,6 +288,16 @@ func assertEvent(t *testing.T, events []db.AppEvent, want string) {
 		}
 	}
 	t.Fatalf("event %q not found in %#v", want, events)
+}
+
+func countTodoBody(todos []db.Todo, body string) int {
+	count := 0
+	for _, todo := range todos {
+		if todo.Body == body {
+			count++
+		}
+	}
+	return count
 }
 
 func readUntil(t *testing.T, r io.Reader, want string) string {

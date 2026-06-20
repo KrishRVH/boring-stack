@@ -8,7 +8,7 @@ import (
 
 templ Home(vm appmodel.HomeView) {
 	<!DOCTYPE html>
-	<html lang="en" class="h-full bg-slate-950 text-slate-100">
+	<html lang="en" class="h-full bg-zinc-950 text-zinc-100">
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -18,95 +18,157 @@ templ Home(vm appmodel.HomeView) {
 			<script src="/assets/vendor/sse.min.js"></script>
 			<script defer src="/assets/vendor/alpine.min.js"></script>
 		</head>
-		<body class="min-h-full bg-slate-950 text-slate-100 antialiased">
+		<body class="min-h-full bg-zinc-950 text-zinc-100 antialiased">
 			<main
-				class="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8"
+				class="min-h-screen bg-[linear-gradient(180deg,#18181b_0%,#09090b_42%,#111827_100%)]"
 				hx-ext="sse"
 				sse-connect="/stream"
 			>
 				<div id="stream-updates" class="hidden" aria-hidden="true" sse-swap="snapshot" hx-swap="none"></div>
-				<header class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur">
-					<div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-						<div>
-							<p class="text-sm font-medium uppercase tracking-[0.35em] text-cyan-300">Boring Stack</p>
-							<h1 class="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">templ + sqlc + HTMX</h1>
-							<p class="mt-4 max-w-3xl text-base leading-7 text-slate-300">
-								A deliberately small app that exercises server-rendered components, HTMX requests/SSE, Postgres queries, migrations, jobs, structured logs, embedded assets, and an optional NATS fanout bus.
-							</p>
-						</div>
-						<div class="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
-							<p class="font-semibold">Bus: { vm.BusName }</p>
-							<p class="mt-1 text-cyan-100/80">Open two tabs, then add or toggle a todo.</p>
-						</div>
-					</div>
-				</header>
-				<section class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+				@TopBar()
+				<div class="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
 					<div class="space-y-6">
-						@TodoComposer(vm.FormError)
-						@StatsPanel(vm.Stats, false)
-						@TodosPanel(vm.Todos, false)
+						<section id="workbench" class="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+							<div class="space-y-6">
+								@TodoComposer(vm.FormError)
+								@StatsPanel(vm.Stats, false)
+							</div>
+							@TodosPanel(vm.Todos, false)
+						</section>
+						@Hero(vm)
+						@CapabilityGrid()
+						@RecipeBoard()
+						@StackFlow()
 					</div>
-					<div class="space-y-6">
-						@AlpinePanel()
+					<aside class="space-y-6 lg:sticky lg:top-6 lg:self-start">
 						@EventsPanel(vm.Events, false)
+						@AlpinePanel()
+						@CommandCenter()
 						@VersionPanel(vm.Version)
-					</div>
-				</section>
+					</aside>
+				</div>
 			</main>
 		</body>
 	</html>
 }
 
+templ TopBar() {
+	<header class="border-b border-white/10 bg-zinc-950/95">
+		<div class="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+			<a class="text-base font-semibold text-white" href="/">Boring Stack</a>
+			<nav class="flex flex-wrap gap-2 text-sm text-zinc-300" aria-label="Showcase sections">
+				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-emerald-300 hover:text-emerald-100" href="#workbench">Workbench</a>
+				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-amber-300 hover:text-amber-100" href="#capabilities">Capabilities</a>
+				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-sky-300 hover:text-sky-100" href="#recipes">Recipes</a>
+			</nav>
+		</div>
+	</header>
+}
+
+templ Hero(vm appmodel.HomeView) {
+	<section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+		<div class="rounded-lg border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20">
+			<p class="text-sm font-semibold uppercase text-emerald-300">Live full-stack cockpit</p>
+			<h1 class="mt-3 max-w-4xl text-4xl font-semibold text-white sm:text-5xl">One boring stack, many app shapes.</h1>
+			<p class="mt-4 max-w-3xl text-base leading-7 text-zinc-300">
+				This page is a working app surface: server-rendered HTML, HTMX forms, SSE updates, Alpine local state, sqlc queries, Goose migrations, River jobs, embedded assets, and optional NATS fanout all share one readable path.
+			</p>
+			<div class="mt-6 grid gap-3 sm:grid-cols-3">
+				@ProofPill("HTML first", "templ renders every panel")
+				@ProofPill("Live updates", "SSE swaps full snapshots")
+				@ProofPill("Durable work", "Postgres plus River")
+			</div>
+		</div>
+		<section class="rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-5">
+			<h2 class="text-base font-semibold text-emerald-50">Runtime signal</h2>
+			<dl class="mt-4 space-y-3 text-sm">
+				@SignalRow("Bus", vm.BusName)
+				@SignalRow("Routing", "ServeMux")
+				@SignalRow("Rendered by", "templ")
+				@SignalRow("Go", vm.Version.Go)
+			</dl>
+		</section>
+	</section>
+}
+
+templ ProofPill(title string, body string) {
+	<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
+		<p class="font-semibold text-white">{ title }</p>
+		<p class="mt-1 text-sm leading-6 text-zinc-400">{ body }</p>
+	</div>
+}
+
+templ SignalRow(label string, value string) {
+	<div class="flex items-start justify-between gap-4 border-b border-emerald-200/10 pb-3 last:border-0 last:pb-0">
+		<dt class="text-emerald-100/75">{ label }</dt>
+		<dd class="max-w-[11rem] break-words text-right font-mono text-emerald-50">{ value }</dd>
+	</div>
+}
+
 templ TodoComposer(formError string) {
-	<section id="composer-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
-		<h2 class="text-lg font-semibold text-white">Create a todo</h2>
-		<p class="mt-1 text-sm text-slate-400">The form posts plain fields to Go. The response returns server-rendered fragments for HTMX to swap.</p>
-		<form class="mt-4 flex flex-col gap-3 sm:flex-row" method="post" action="/todos" hx-post="/todos" hx-target="#composer-panel" hx-swap="outerHTML">
+	<section id="composer-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
+		<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+			<div>
+				<h2 class="text-lg font-semibold text-white">Build queue</h2>
+				<p class="mt-1 text-sm leading-6 text-zinc-400">Plain forms, server validation, sqlc writes, and HTMX fragments.</p>
+			</div>
+			<form method="post" action="/demo/seed" hx-post="/demo/seed" hx-target="#composer-panel" hx-swap="outerHTML">
+				<button class="min-h-10 rounded-md border border-amber-300/40 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:border-amber-200 hover:bg-amber-300/10" type="submit">
+					Seed flow
+				</button>
+			</form>
+		</div>
+		<form class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" method="post" action="/todos" hx-post="/todos" hx-target="#composer-panel" hx-swap="outerHTML">
+			<label class="sr-only" for="todo-body">Next app slice</label>
 			<input
-				class="min-h-12 flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 text-base text-white outline-none ring-cyan-300/40 transition placeholder:text-slate-500 focus:border-cyan-300 focus:ring-4"
+				class="min-h-12 rounded-md border border-white/10 bg-zinc-950/80 px-4 text-base text-white outline-none ring-emerald-300/40 transition placeholder:text-zinc-500 focus:border-emerald-300 focus:ring-4"
+				id="todo-body"
 				type="text"
 				name="body"
-				placeholder="Ship the smallest coherent slice"
+				placeholder="Add the next app slice"
 				autocomplete="off"
 				maxlength={ fmt.Sprint(appmodel.MaxTodoBodyLength) }
+				{ attrIf(formError != "", "aria-describedby", "todo-error")... }
+				{ attrIf(formError != "", "aria-invalid", "true")... }
 				required
 			/>
-			<button class="min-h-12 rounded-2xl bg-cyan-300 px-5 font-semibold text-slate-950 transition hover:bg-cyan-200" type="submit">
-				Add
+			<button class="min-h-12 rounded-md bg-white px-5 font-semibold text-zinc-950 transition hover:bg-zinc-200" type="submit">
+				Add slice
 			</button>
 		</form>
 		if formError != "" {
-			<p class="mt-3 rounded-xl border border-rose-300/20 bg-rose-300/10 px-4 py-2 text-sm text-rose-200">{ formError }</p>
+			<p id="todo-error" class="mt-3 rounded-md border border-rose-300/25 bg-rose-300/10 px-4 py-2 text-sm text-rose-100" role="alert">{ formError }</p>
 		}
 	</section>
 }
 
 templ StatsPanel(stats appmodel.Stats, oob bool) {
 	<section id="stats-panel" class="grid grid-cols-3 gap-3" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
-		@StatCard("Total", fmt.Sprint(stats.Total))
-		@StatCard("Open", fmt.Sprint(stats.Open()))
-		@StatCard("Done", fmt.Sprint(stats.Done))
+		@StatCard("Total", fmt.Sprint(stats.Total), "Persisted rows")
+		@StatCard("Open", fmt.Sprint(stats.Open()), "Ready to build")
+		@StatCard("Done", fmt.Sprint(stats.Done), "Closed loops")
 	</section>
 }
 
-templ StatCard(label string, value string) {
-	<div class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
-		<p class="text-sm text-slate-400">{ label }</p>
+templ StatCard(label string, value string, caption string) {
+	<div class="rounded-lg border border-white/10 bg-zinc-900/80 p-4 shadow-lg shadow-black/20">
+		<p class="text-sm text-zinc-400">{ label }</p>
 		<p class="mt-2 text-3xl font-semibold text-white">{ value }</p>
+		<p class="mt-1 text-xs text-zinc-400">{ caption }</p>
 	</div>
 }
 
 templ TodosPanel(todos []appmodel.Todo, oob bool) {
-	<section id="todos-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+	<section id="todos-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
 		<div class="flex items-center justify-between gap-4">
 			<div>
-				<h2 class="text-lg font-semibold text-white">Todos</h2>
-				<p class="mt-1 text-sm text-slate-400">Mutations go through sqlc/pgx and publish one full snapshot event to connected browsers.</p>
+				<h2 class="text-lg font-semibold text-white">Database-backed workflow</h2>
+				<p class="mt-1 text-sm leading-6 text-zinc-400">Each row is rendered by Go after a Postgres round trip.</p>
 			</div>
 		</div>
-		<div class="mt-5 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10">
+		<div class="mt-5 divide-y divide-white/10 overflow-hidden rounded-lg border border-white/10">
 			if len(todos) == 0 {
-				<div class="bg-slate-950/60 p-5 text-sm text-slate-400">No todos yet.</div>
+				<div class="bg-zinc-950/70 p-5 text-sm text-zinc-400">No todos yet.</div>
 			}
 			for _, todo := range todos {
 				@TodoRow(todo)
@@ -116,74 +178,212 @@ templ TodosPanel(todos []appmodel.Todo, oob bool) {
 }
 
 templ TodoRow(todo appmodel.Todo) {
-	<article class="flex flex-col gap-4 bg-slate-950/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+	<article class="flex flex-col gap-4 bg-zinc-950/55 p-4 sm:flex-row sm:items-center sm:justify-between">
 		<div class="min-w-0">
 			if todo.Done {
-				<p class="break-words text-base font-medium text-slate-400 line-through">{ todo.Body }</p>
+				<p class="break-words text-base font-medium text-zinc-500 line-through">{ todo.Body }</p>
 			} else {
 				<p class="break-words text-base font-medium text-white">{ todo.Body }</p>
 			}
-			<p class="mt-1 text-xs text-slate-500">created { shortDateTime(todo.CreatedAt) }</p>
+			<p class="mt-1 text-xs text-zinc-400">created { shortDateTime(todo.CreatedAt) }</p>
 		</div>
 		<div class="flex shrink-0 gap-2">
-			<button class="rounded-xl border border-white/10 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-300/70 hover:text-cyan-100" type="button" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... }>
-				if todo.Done {
-					Reopen
-				} else {
-					Done
-				}
-			</button>
-			<button class="rounded-xl border border-rose-300/20 px-3 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-300/70 hover:text-rose-100" type="button" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... }>
-				Delete
-			</button>
+			<form method="post" { attr("action", fmt.Sprintf("/todos/%s/toggle", todo.ID))... }>
+				<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-emerald-300/70 hover:text-emerald-100" type="submit" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... } { attr("aria-label", todoToggleLabel(todo))... }>
+					if todo.Done {
+						Reopen
+					} else {
+						Done
+					}
+				</button>
+			</form>
+			<form method="post" { attr("action", fmt.Sprintf("/todos/%s/delete", todo.ID))... }>
+				<button class="min-h-10 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-medium text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10" type="submit" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... } { attr("aria-label", todoDeleteLabel(todo))... }>
+					Delete
+				</button>
+			</form>
 		</div>
 	</article>
 }
 
-templ AlpinePanel() {
-	<section id="alpine-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attr("x-data", "{ localClicks: 0 }")... }>
-		<h2 class="text-lg font-semibold text-white">Alpine island</h2>
-		<p class="mt-1 text-sm text-slate-400">Local-only behavior stays in a tiny Alpine component. Server state still flows through HTMX.</p>
-		<div class="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-			<p class="text-sm text-slate-400">Local clicks</p>
-			<p class="mt-2 text-3xl font-semibold text-white" { attr("x-text", "localClicks")... }>0</p>
-			<button class="mt-4 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-200" type="button" { attr("@click", "localClicks++")... }>
-				Increment
-			</button>
-		</div>
-	</section>
-}
-
 templ EventsPanel(events []appmodel.Event, oob bool) {
-	<section id="events-panel" class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+	<section id="events-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
 		<div class="flex items-start justify-between gap-4">
 			<div>
-				<h2 class="text-lg font-semibold text-white">Live event log</h2>
-				<p class="mt-1 text-sm text-slate-400">Go handlers and River jobs write this table and broadcast a snapshot.</p>
+				<h2 class="text-lg font-semibold text-white">Signal stream</h2>
+				<p class="mt-1 text-sm leading-6 text-zinc-400">Handlers and jobs write event rows, then fan out one snapshot.</p>
 			</div>
-			<button class="rounded-xl bg-lime-300 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-lime-200" type="button" hx-post="/jobs/snapshot" hx-swap="none">
-				Run job
-			</button>
+		</div>
+		<div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+			<form method="post" action="/jobs/snapshot" hx-post="/jobs/snapshot" hx-target="#composer-panel" hx-swap="outerHTML">
+				<button class="min-h-10 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200" type="submit">
+					Run River job
+				</button>
+			</form>
+			<form method="post" action="/demo/pulse" hx-post="/demo/pulse" hx-target="#composer-panel" hx-swap="outerHTML">
+				<button class="min-h-10 w-full rounded-md border border-sky-300/40 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10" type="submit">
+					Broadcast pulse
+				</button>
+			</form>
 		</div>
 		<div class="mt-5 space-y-3">
 			if len(events) == 0 {
-				<p class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm text-slate-400">No events yet.</p>
+				<p class="rounded-md border border-white/10 bg-zinc-950/70 p-4 text-sm text-zinc-400">No events yet.</p>
 			}
 			for _, event := range events {
-				<div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+				<div class="rounded-md border border-white/10 bg-zinc-950/70 p-4">
 					<div class="flex items-center justify-between gap-3">
-						<p class="text-sm font-semibold text-cyan-100">{ event.Kind }</p>
-						<p class="text-xs text-slate-500">{ shortTime(event.CreatedAt) }</p>
+						<p class="text-sm font-semibold text-sky-100">{ event.Kind }</p>
+						<p class="text-xs text-zinc-400">{ shortTime(event.CreatedAt) }</p>
 					</div>
-					<p class="mt-2 text-sm leading-6 text-slate-300">{ event.Body }</p>
+					<p class="mt-2 break-words text-sm leading-6 text-zinc-300">{ event.Body }</p>
 				</div>
 			}
 		</div>
 	</section>
 }
 
+templ AlpinePanel() {
+	<section id="alpine-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attr("x-data", "{ localClicks: 0, mode: 'Dense' }")... }>
+		<h2 class="text-lg font-semibold text-white">Local UI island</h2>
+		<p class="mt-1 text-sm leading-6 text-zinc-400">Alpine owns local controls while server state stays on the server.</p>
+		<div class="mt-4 rounded-lg border border-white/10 bg-zinc-950/70 p-4">
+			<div class="grid grid-cols-2 gap-3 text-sm">
+				<div>
+					<p class="text-zinc-400">Local clicks</p>
+					<p class="mt-1 text-3xl font-semibold text-white" { attr("x-text", "localClicks")... }>0</p>
+				</div>
+				<div>
+					<p class="text-zinc-400">Mode</p>
+					<p class="mt-2 font-semibold text-emerald-100" { attr("x-text", "mode")... }>Dense</p>
+				</div>
+			</div>
+			<div class="mt-4 grid grid-cols-2 gap-2">
+				<button class="min-h-10 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200" type="button" { attr("@click", "localClicks++")... }>
+					Increment
+				</button>
+				<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-100 transition hover:border-emerald-300" type="button" { attr("@click", "mode = mode === 'Dense' ? 'Calm' : 'Dense'")... }>
+					Toggle mode
+				</button>
+			</div>
+		</div>
+	</section>
+}
+
+templ CapabilityGrid() {
+	<section id="capabilities" class="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+		<div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+			<div>
+				<p class="text-sm font-semibold uppercase text-amber-300">Capability map</p>
+				<h2 class="mt-2 text-2xl font-semibold text-white">Enough moving parts to build real products.</h2>
+			</div>
+			<p class="max-w-xl text-sm leading-6 text-zinc-400">Each card maps to code that exists in this repo, not a theoretical integration.</p>
+		</div>
+		<div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+			@CapabilityCard("HTTP", "Stdlib routing", "Method-aware ServeMux routes keep request flow obvious.", "internal/server/app.go")
+			@CapabilityCard("HTML", "templ components", "Typed server components render full pages and HTMX fragments.", "internal/ui/home.templ")
+			@CapabilityCard("Data", "sqlc plus pgx", "Raw SQL remains visible while Go gets generated typed methods.", "internal/db/query/todos.sql")
+			@CapabilityCard("Migrate", "Goose migrations", "App schema changes live as embedded SQL migrations.", "internal/db/migrations")
+			@CapabilityCard("Jobs", "River workers", "Durable background jobs run from the same Postgres backbone.", "internal/jobs")
+			@CapabilityCard("Realtime", "SSE and fanout", "Connected browsers receive full server snapshots over HTMX SSE.", "internal/realtime")
+		</div>
+	</section>
+}
+
+templ CapabilityCard(kicker string, title string, body string, proof string) {
+	<article class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
+		<p class="text-xs font-semibold uppercase text-zinc-400">{ kicker }</p>
+		<h3 class="mt-2 text-lg font-semibold text-white">{ title }</h3>
+		<p class="mt-2 text-sm leading-6 text-zinc-400">{ body }</p>
+		<p class="mt-4 rounded-md bg-white/5 px-3 py-2 font-mono text-xs text-zinc-300">{ proof }</p>
+	</article>
+}
+
+templ RecipeBoard() {
+	<section id="recipes" class="rounded-lg border border-white/10 bg-white/[0.04] p-5" { attr("x-data", "{ recipe: 'saas' }")... }>
+		<p class="text-sm font-semibold uppercase text-sky-300">App recipes</p>
+		<h2 class="mt-2 text-2xl font-semibold text-white">The same stack stretches across common product shapes.</h2>
+		<div class="mt-5 flex flex-wrap gap-2">
+			@RecipeButton("saas", "SaaS dashboard")
+			@RecipeButton("ops", "Ops console")
+			@RecipeButton("collab", "Realtime workspace")
+		</div>
+		<div class="mt-5">
+			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" { attr("x-show", "recipe === 'saas'")... }>
+				@RecipeContent("SaaS dashboard", "Serve authenticated pages, mutate records with HTMX forms, run billing or imports in River, and stream account-level updates through SSE.", "Go handlers -> templ -> sqlc -> Postgres -> River")
+			</div>
+			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" style="display: none;" { attr("x-show", "recipe === 'ops'")... }>
+				@RecipeContent("Ops console", "Render dense tables, provide server-side filters, enqueue repair jobs, and broadcast fresh snapshots when workers finish.", "ServeMux -> query params -> sqlc -> River -> SSE")
+			</div>
+			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" style="display: none;" { attr("x-show", "recipe === 'collab'")... }>
+				@RecipeContent("Realtime workspace", "Keep durable state in Postgres, use NATS only for ephemeral fanout, and let each tab reconcile from full server snapshots.", "Postgres truth -> NATS fanout -> HTMX OOB swaps")
+			</div>
+		</div>
+	</section>
+}
+
+templ RecipeButton(key string, label string) {
+	<button
+		class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-sky-300"
+		type="button"
+		{ attr("@click", "recipe = '"+key+"'")... }
+		{ attr(":class", "recipe === '"+key+"' ? 'bg-sky-300 text-zinc-950 border-sky-300' : 'bg-transparent'")... }
+		{ attr(":aria-pressed", "recipe === '"+key+"' ? 'true' : 'false'")... }
+	>
+		{ label }
+	</button>
+}
+
+templ RecipeContent(title string, body string, path string) {
+	<h3 class="text-xl font-semibold text-white">{ title }</h3>
+	<p class="mt-3 text-sm leading-6 text-zinc-300">{ body }</p>
+	<p class="mt-4 rounded-md border border-sky-300/20 bg-sky-300/10 px-3 py-2 font-mono text-xs text-sky-100">{ path }</p>
+}
+
+templ StackFlow() {
+	<section class="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+		<p class="text-sm font-semibold uppercase text-rose-300">Request path</p>
+		<h2 class="mt-2 text-2xl font-semibold text-white">Traceable from browser action to browser update.</h2>
+		<div class="mt-5 grid gap-3 md:grid-cols-5">
+			@FlowStep("1", "Browser", "Form, button, or SSE connection")
+			@FlowStep("2", "ServeMux", "Small handler with local validation")
+			@FlowStep("3", "Postgres", "sqlc query inside a transaction")
+			@FlowStep("4", "Job or event", "River for durable work, bus for fanout")
+			@FlowStep("5", "HTML patch", "templ fragment with OOB swaps")
+		</div>
+	</section>
+}
+
+templ FlowStep(number string, title string, body string) {
+	<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
+		<p class="flex h-8 w-8 items-center justify-center rounded-md bg-rose-300 text-sm font-bold text-zinc-950">{ number }</p>
+		<h3 class="mt-4 font-semibold text-white">{ title }</h3>
+		<p class="mt-2 text-sm leading-6 text-zinc-400">{ body }</p>
+	</div>
+}
+
+templ CommandCenter() {
+	<section class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
+		<h2 class="text-lg font-semibold text-white">Developer loop</h2>
+		<p class="mt-1 text-sm leading-6 text-zinc-400">The command surface stays local and small.</p>
+		<div class="mt-4 space-y-3">
+			@CommandRow("mise run dev", "Generate, build CSS, and run")
+			@CommandRow("mise run regenerate", "Refresh sqlc, templ, and CSS")
+			@CommandRow("mise run check", "Normal local quality gate")
+			@CommandRow("mise run ci", "Extended local gate")
+		</div>
+	</section>
+}
+
+templ CommandRow(command string, body string) {
+	<div class="rounded-md border border-white/10 bg-zinc-950/70 p-3">
+		<p class="font-mono text-sm text-white">{ command }</p>
+		<p class="mt-1 text-xs leading-5 text-zinc-400">{ body }</p>
+	</div>
+}
+
 templ VersionPanel(v appmodel.VersionInfo) {
-	<section class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20">
+	<section class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
 		<h2 class="text-lg font-semibold text-white">Pinned stack</h2>
 		<dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
 			@VersionRow("Go", v.Go)
@@ -202,6 +402,6 @@ templ VersionPanel(v appmodel.VersionInfo) {
 }
 
 templ VersionRow(name string, value string) {
-	<dt class="text-slate-500">{ name }</dt>
-	<dd class="font-mono text-slate-200">{ value }</dd>
+	<dt class="text-zinc-400">{ name }</dt>
+	<dd class="break-words font-mono text-zinc-200">{ value }</dd>
 }

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/KrishRVH/boring-stack/internal/appmodel"
+	"github.com/KrishRVH/boring-stack/internal/db"
 )
 
 func TestWriteSSEFormatsNamedHTMLPayload(t *testing.T) {
@@ -52,6 +53,18 @@ func TestRoutesDoNotLetHomeHandleUnknownPaths(t *testing.T) {
 
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("GET /missing status = %d, want %d", rec.Code, http.StatusNotFound)
+	}
+}
+
+func TestMissingShowcaseSeedItems(t *testing.T) {
+	got := missingShowcaseSeedItems([]db.Todo{
+		{Body: "Model the first happy path"},
+		{Body: "Move the slow step into River"},
+	})
+
+	want := []string{"Render the workflow with templ"}
+	if strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Fatalf("missingShowcaseSeedItems() = %#v, want %#v", got, want)
 	}
 }
 

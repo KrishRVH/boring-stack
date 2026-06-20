@@ -43,3 +43,4 @@ web/assets/css/app.css.map
 
 # Go
 *.test
+.gstack/
