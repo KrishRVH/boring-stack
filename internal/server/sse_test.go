@@ -58,11 +58,11 @@ func TestRoutesDoNotLetHomeHandleUnknownPaths(t *testing.T) {
 
 func TestMissingShowcaseSeedItems(t *testing.T) {
 	got := missingShowcaseSeedItems([]db.Todo{
-		{Body: "Model the first happy path"},
-		{Body: "Move the slow step into River"},
+		{Body: "Model the account billing workflow"},
+		{Body: "Move invoice sync into River"},
 	})
 
-	want := []string{"Render the workflow with templ"}
+	want := []string{"Render the operator review queue"}
 	if strings.Join(got, "\n") != strings.Join(want, "\n") {
 		t.Fatalf("missingShowcaseSeedItems() = %#v, want %#v", got, want)
 	}

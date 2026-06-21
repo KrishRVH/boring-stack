@@ -178,7 +178,7 @@ func TestShowcaseActionsReturnSnapshots(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := countTodoBody(todos, "Model the first happy path"); got != 1 {
+	if got := countTodoBody(todos, "Model the account billing workflow"); got != 1 {
 		t.Fatalf("seeded todo count = %d, want 1", got)
 	}
 
@@ -188,7 +188,7 @@ func TestShowcaseActionsReturnSnapshots(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := countTodoBody(todos, "Model the first happy path"); got != 1 {
+	if got := countTodoBody(todos, "Model the account billing workflow"); got != 1 {
 		t.Fatalf("seeded todo count after reseed = %d, want 1", got)
 	}
 	events, err = app.q.ListEvents(context.Background(), 10)

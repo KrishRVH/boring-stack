@@ -61,7 +61,7 @@ func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtim
 	app.routes()
 	app.server = &http.Server{
 		Addr:              cfg.Addr,
-		Handler:           app.requestLogger(app.mux),
+		Handler:           app.requestLogger(app.securityHeaders(app.mux)),
 		ReadHeaderTimeout: 5 * time.Second,
 		IdleTimeout:       90 * time.Second,
 	}
@@ -362,9 +362,9 @@ func (a *App) seedShowcase(w http.ResponseWriter, r *http.Request) {
 }
 
 var showcaseSeedItems = []string{
-	"Model the first happy path",
-	"Render the workflow with templ",
-	"Move the slow step into River",
+	"Model the account billing workflow",
+	"Render the operator review queue",
+	"Move invoice sync into River",
 }
 
 func missingShowcaseSeedItems(todos []db.Todo) []string {

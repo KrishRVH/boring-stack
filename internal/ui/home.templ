@@ -12,6 +12,8 @@ templ Home(vm appmodel.HomeView) {
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="theme-color" content="#09090b"/>
+			<meta name="htmx-config" content='{"allowEval":false,"allowScriptTags":false,"includeIndicatorStyles":false}'/>
 			<title>Boring Stack</title>
 			<link rel="stylesheet" href="/assets/css/app.css"/>
 			<script src="/assets/vendor/htmx.min.js"></script>
@@ -20,32 +22,35 @@ templ Home(vm appmodel.HomeView) {
 		</head>
 		<body class="min-h-full bg-zinc-950 text-zinc-100 antialiased">
 			<main
-				class="min-h-screen bg-[linear-gradient(180deg,#18181b_0%,#09090b_42%,#111827_100%)]"
+				class="min-h-screen bg-[linear-gradient(180deg,#10100f_0%,#09090b_46%,#11110f_100%)]"
 				hx-ext="sse"
 				sse-connect="/stream"
 			>
 				<div id="stream-updates" class="hidden" aria-hidden="true" sse-swap="snapshot" hx-swap="none"></div>
 				@TopBar()
-				<div class="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
-					<div class="space-y-6">
-						<section id="workbench" class="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-							<div class="space-y-6">
-								@TodoComposer(vm.FormError)
-								@StatsPanel(vm.Stats, false)
-							</div>
-							@TodosPanel(vm.Todos, false)
-						</section>
-						@Hero(vm)
-						@CapabilityGrid()
-						@RecipeBoard()
-						@StackFlow()
+				<div class="mx-auto w-full max-w-[92rem] px-4 py-5 sm:px-6 lg:px-8">
+					@IntroBand(vm)
+					<div id="workbench" class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.36fr)_minmax(21rem,0.64fr)]">
+						<div class="space-y-5">
+							<section class="grid gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]" aria-label="Live workbench">
+								<div class="space-y-5">
+									@TodoComposer(vm.FormError)
+									@StatsPanel(vm.Stats, false)
+								</div>
+								@TodosPanel(vm.Todos, false)
+							</section>
+							@HTTPContract()
+							@CapabilityGrid()
+							@RecipeBoard()
+							@StackFlow()
+						</div>
+						<aside class="space-y-5 xl:sticky xl:top-20 xl:self-start" aria-label="Runtime side panels">
+							@EventsPanel(vm.Events, false)
+							@AlpinePanel()
+							@CommandCenter()
+							@VersionPanel(vm.Version)
+						</aside>
 					</div>
-					<aside class="space-y-6 lg:sticky lg:top-6 lg:self-start">
-						@EventsPanel(vm.Events, false)
-						@AlpinePanel()
-						@CommandCenter()
-						@VersionPanel(vm.Version)
-					</aside>
 				</div>
 			</main>
 		</body>
@@ -53,85 +58,80 @@ templ Home(vm appmodel.HomeView) {
 }
 
 templ TopBar() {
-	<header class="border-b border-white/10 bg-zinc-950/95">
-		<div class="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-			<a class="text-base font-semibold text-white" href="/">Boring Stack</a>
-			<nav class="flex flex-wrap gap-2 text-sm text-zinc-300" aria-label="Showcase sections">
-				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-emerald-300 hover:text-emerald-100" href="#workbench">Workbench</a>
-				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-amber-300 hover:text-amber-100" href="#capabilities">Capabilities</a>
-				<a class="rounded-md border border-white/10 px-3 py-2 transition hover:border-sky-300 hover:text-sky-100" href="#recipes">Recipes</a>
+	<header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/90 backdrop-blur">
+		<div class="mx-auto flex w-full max-w-[92rem] flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+			<a class="group inline-flex min-h-11 items-center gap-3 rounded-md text-white outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="/">
+				<span class="flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/35 bg-emerald-300/10 font-mono text-sm font-bold text-emerald-100">BS</span>
+				<span>
+					<span class="block text-base font-semibold leading-5">Boring Stack</span>
+					<span class="block text-xs font-medium text-zinc-400">Production Go web starter</span>
+				</span>
+			</a>
+			<nav class="flex gap-2 overflow-x-auto whitespace-nowrap text-sm text-zinc-300" aria-label="Showcase sections">
+				<a class="inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="#workbench">Workbench</a>
+				<a class="inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="#http">HTTP</a>
+				<a class="inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="#capabilities">Capabilities</a>
+				<a class="inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="#recipes">Recipes</a>
 			</nav>
 		</div>
 	</header>
 }
 
-templ Hero(vm appmodel.HomeView) {
-	<section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-		<div class="rounded-lg border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20">
-			<p class="text-sm font-semibold uppercase text-emerald-300">Live full-stack cockpit</p>
-			<h1 class="mt-3 max-w-4xl text-4xl font-semibold text-white sm:text-5xl">One boring stack, many app shapes.</h1>
-			<p class="mt-4 max-w-3xl text-base leading-7 text-zinc-300">
-				This page is a working app surface: server-rendered HTML, HTMX forms, SSE updates, Alpine local state, sqlc queries, Goose migrations, River jobs, embedded assets, and optional NATS fanout all share one readable path.
-			</p>
-			<div class="mt-6 grid gap-3 sm:grid-cols-3">
-				@ProofPill("HTML first", "templ renders every panel")
-				@ProofPill("Live updates", "SSE swaps full snapshots")
-				@ProofPill("Durable work", "Postgres plus River")
+templ IntroBand(vm appmodel.HomeView) {
+	<section class="rounded-lg border border-white/10 bg-zinc-900/85 p-5 shadow-xl shadow-black/20 sm:p-6" aria-labelledby="page-title">
+		<div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.38fr)] lg:items-start">
+			<div>
+				<p class="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-300">Production-shaped Go web app</p>
+				<h1 id="page-title" class="mt-3 max-w-4xl text-2xl font-semibold leading-tight text-white text-balance sm:text-4xl lg:text-5xl">Build serious server-rendered products without hiding the request path.</h1>
+				<p class="mt-3 max-w-3xl text-sm leading-6 text-zinc-300 sm:mt-4 sm:text-base sm:leading-7">
+					This page is the app: normal HTTP routes, typed SQL, durable jobs, live SSE patches, embedded assets, and a small local UI island. The pieces stay visible so a complex product can still be debugged from request to response.
+				</p>
 			</div>
-		</div>
-		<section class="rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-5">
-			<h2 class="text-base font-semibold text-emerald-50">Runtime signal</h2>
-			<dl class="mt-4 space-y-3 text-sm">
-				@SignalRow("Bus", vm.BusName)
-				@SignalRow("Routing", "ServeMux")
-				@SignalRow("Rendered by", "templ")
-				@SignalRow("Go", vm.Version.Go)
+			<dl class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+				@SystemFact("HTTP", "ServeMux")
+				@SystemFact("Realtime", vm.BusName+" bus")
+				@SystemFact("Renderer", "templ")
+				@SystemFact("Runtime", vm.Version.Go)
 			</dl>
-		</section>
+		</div>
 	</section>
 }
 
-templ ProofPill(title string, body string) {
-	<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
-		<p class="font-semibold text-white">{ title }</p>
-		<p class="mt-1 text-sm leading-6 text-zinc-400">{ body }</p>
-	</div>
-}
-
-templ SignalRow(label string, value string) {
-	<div class="flex items-start justify-between gap-4 border-b border-emerald-200/10 pb-3 last:border-0 last:pb-0">
-		<dt class="text-emerald-100/75">{ label }</dt>
-		<dd class="max-w-[11rem] break-words text-right font-mono text-emerald-50">{ value }</dd>
+templ SystemFact(label string, value string) {
+	<div class="rounded-md border border-white/10 bg-zinc-950/65 p-4">
+		<dt class="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">{ label }</dt>
+		<dd class="mt-2 break-words font-mono text-sm text-zinc-100">{ value }</dd>
 	</div>
 }
 
 templ TodoComposer(formError string) {
-	<section id="composer-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
+	<section id="composer-panel" class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="composer-heading">
 		<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 			<div>
-				<h2 class="text-lg font-semibold text-white">Build queue</h2>
-				<p class="mt-1 text-sm leading-6 text-zinc-400">Plain forms, server validation, sqlc writes, and HTMX fragments.</p>
+				<p class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">POST /todos</p>
+				<h2 id="composer-heading" class="mt-2 text-lg font-semibold text-white">Create a work item</h2>
+				<p class="mt-1 text-sm leading-6 text-zinc-400">Validate on the server, write through sqlc, return HTML.</p>
 			</div>
-			<button class="min-h-10 rounded-md border border-amber-300/40 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:border-amber-200 hover:bg-amber-300/10" type="button" hx-post="/demo/seed" hx-target="#composer-panel" hx-swap="outerHTML">
-				Seed flow
+			<button class="min-h-11 rounded-md border border-amber-300/45 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:border-amber-200 hover:bg-amber-300/10 focus-visible:ring-4 focus-visible:ring-amber-300/25" type="button" hx-post="/demo/seed" hx-target="#composer-panel" hx-swap="outerHTML">
+				Load sample plan
 			</button>
 		</div>
 		<form class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" method="post" action="/todos" hx-post="/todos" hx-target="#composer-panel" hx-swap="outerHTML">
-			<label class="sr-only" for="todo-body">Next app slice</label>
+			<label class="sr-only" for="todo-body">Next production slice</label>
 			<input
-				class="min-h-12 rounded-md border border-white/10 bg-zinc-950/80 px-4 text-base text-white outline-none ring-emerald-300/40 transition placeholder:text-zinc-500 focus:border-emerald-300 focus:ring-4"
+				class="min-h-12 rounded-md border border-white/10 bg-zinc-950/85 px-4 text-base text-white outline-none transition placeholder:text-zinc-500 focus:border-emerald-300 focus:ring-4 focus:ring-emerald-300/30"
 				id="todo-body"
 				type="text"
 				name="body"
-				placeholder="Add the next app slice"
+				placeholder="Add a production slice"
 				autocomplete="off"
 				maxlength={ fmt.Sprint(appmodel.MaxTodoBodyLength) }
 				{ attrIf(formError != "", "aria-describedby", "todo-error")... }
 				{ attrIf(formError != "", "aria-invalid", "true")... }
 				required
 			/>
-			<button class="min-h-12 rounded-md bg-white px-5 font-semibold text-zinc-950 transition hover:bg-zinc-200" type="submit">
-				Add slice
+			<button class="min-h-12 rounded-md bg-emerald-300 px-5 font-semibold text-zinc-950 transition hover:bg-emerald-200 focus-visible:ring-4 focus-visible:ring-emerald-300/35" type="submit">
+				Add item
 			</button>
 		</form>
 		if formError != "" {
@@ -141,7 +141,7 @@ templ TodoComposer(formError string) {
 }
 
 templ StatsPanel(stats appmodel.Stats, oob bool) {
-	<section id="stats-panel" class="grid grid-cols-3 gap-3" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+	<section id="stats-panel" class="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Workflow metrics" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
 		@StatCard("Total", fmt.Sprint(stats.Total), "Persisted rows")
 		@StatCard("Open", fmt.Sprint(stats.Open()), "Ready to build")
 		@StatCard("Done", fmt.Sprint(stats.Done), "Closed loops")
@@ -149,24 +149,25 @@ templ StatsPanel(stats appmodel.Stats, oob bool) {
 }
 
 templ StatCard(label string, value string, caption string) {
-	<div class="rounded-lg border border-white/10 bg-zinc-900/80 p-4 shadow-lg shadow-black/20">
-		<p class="text-sm text-zinc-400">{ label }</p>
-		<p class="mt-2 text-3xl font-semibold text-white">{ value }</p>
-		<p class="mt-1 text-xs text-zinc-400">{ caption }</p>
+	<div class="min-h-28 rounded-lg border border-white/10 bg-zinc-900/80 p-4 shadow-lg shadow-black/20">
+		<p class="text-sm font-medium text-zinc-400">{ label }</p>
+		<p class="mt-2 font-mono text-3xl font-semibold text-white">{ value }</p>
+		<p class="mt-1 text-xs leading-5 text-zinc-500">{ caption }</p>
 	</div>
 }
 
 templ TodosPanel(todos []appmodel.Todo, oob bool) {
-	<section id="todos-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
-		<div class="flex items-center justify-between gap-4">
+	<section id="todos-panel" class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="todos-heading" aria-live="polite" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+		<div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 			<div>
-				<h2 class="text-lg font-semibold text-white">Database-backed workflow</h2>
-				<p class="mt-1 text-sm leading-6 text-zinc-400">Each row is rendered by Go after a Postgres round trip.</p>
+				<p class="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300">Database workflow</p>
+				<h2 id="todos-heading" class="mt-2 text-lg font-semibold text-white">Work items</h2>
+				<p class="mt-1 text-sm leading-6 text-zinc-400">Every row is rendered by Go after a Postgres round trip.</p>
 			</div>
 		</div>
-		<div class="mt-5 divide-y divide-white/10 overflow-hidden rounded-lg border border-white/10">
+		<div class="mt-5 overflow-hidden rounded-lg border border-white/10" role="list">
 			if len(todos) == 0 {
-				<div class="bg-zinc-950/70 p-5 text-sm text-zinc-400">No todos yet.</div>
+				<div class="bg-zinc-950/65 p-5 text-sm leading-6 text-zinc-400">No work items yet. Add one or load the sample plan.</div>
 			}
 			for _, todo := range todos {
 				@TodoRow(todo)
@@ -176,24 +177,31 @@ templ TodosPanel(todos []appmodel.Todo, oob bool) {
 }
 
 templ TodoRow(todo appmodel.Todo) {
-	<article class="flex flex-col gap-4 bg-zinc-950/55 p-4 sm:flex-row sm:items-center sm:justify-between">
+	<article class="grid gap-4 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" role="listitem">
 		<div class="min-w-0">
+			<div class="flex flex-wrap items-center gap-2">
+				if todo.Done {
+					<span class="rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-xs font-semibold text-emerald-100">Done</span>
+				} else {
+					<span class="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-xs font-semibold text-amber-100">Open</span>
+				}
+				<p class="text-xs text-zinc-500">created { shortDateTime(todo.CreatedAt) }</p>
+			</div>
 			if todo.Done {
-				<p class="break-words text-base font-medium text-zinc-500 line-through">{ todo.Body }</p>
+				<p class="mt-2 break-words text-base font-medium leading-6 text-zinc-500 line-through">{ todo.Body }</p>
 			} else {
-				<p class="break-words text-base font-medium text-white">{ todo.Body }</p>
+				<p class="mt-2 break-words text-base font-medium leading-6 text-white">{ todo.Body }</p>
 			}
-			<p class="mt-1 text-xs text-zinc-400">created { shortDateTime(todo.CreatedAt) }</p>
 		</div>
-		<div class="flex shrink-0 gap-2">
-			<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-emerald-300/70 hover:text-emerald-100" type="button" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... } { attr("aria-label", todoToggleLabel(todo))... }>
+		<div class="grid grid-cols-2 gap-2 sm:flex sm:shrink-0">
+			<button class="min-h-11 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-100 focus-visible:ring-4 focus-visible:ring-emerald-300/25" type="button" hx-swap="none" { attr("hx-post", fmt.Sprintf("/todos/%s/toggle", todo.ID))... } { attr("aria-label", todoToggleLabel(todo))... }>
 				if todo.Done {
 					Reopen
 				} else {
 					Done
 				}
 			</button>
-			<button class="min-h-10 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-medium text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10" type="button" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... } { attr("aria-label", todoDeleteLabel(todo))... }>
+			<button class="min-h-11 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-semibold text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10 focus-visible:ring-4 focus-visible:ring-rose-300/25" type="button" hx-swap="none" { attr("hx-delete", fmt.Sprintf("/todos/%s", todo.ID))... } { attr("aria-label", todoDeleteLabel(todo))... }>
 				Delete
 			</button>
 		</div>
@@ -201,30 +209,29 @@ templ TodoRow(todo appmodel.Todo) {
 }
 
 templ EventsPanel(events []appmodel.Event, oob bool) {
-	<section id="events-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
-		<div class="flex items-start justify-between gap-4">
-			<div>
-				<h2 class="text-lg font-semibold text-white">Signal stream</h2>
-				<p class="mt-1 text-sm leading-6 text-zinc-400">Handlers and jobs write event rows, then fan out one snapshot.</p>
-			</div>
+	<section id="events-panel" class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="events-heading" aria-live="polite" { attrIf(oob, "hx-swap-oob", "outerHTML")... }>
+		<div>
+			<p class="text-xs font-semibold uppercase tracking-[0.14em] text-sky-300">GET /stream</p>
+			<h2 id="events-heading" class="mt-2 text-lg font-semibold text-white">Event stream</h2>
+			<p class="mt-1 text-sm leading-6 text-zinc-400">Handlers and jobs append events, then push one server snapshot.</p>
 		</div>
-		<div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-			<button class="min-h-10 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200" type="button" hx-post="/jobs/snapshot" hx-target="#composer-panel" hx-swap="outerHTML">
+		<div class="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+			<button class="min-h-11 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200 focus-visible:ring-4 focus-visible:ring-lime-300/35" type="button" hx-post="/jobs/snapshot" hx-target="#composer-panel" hx-swap="outerHTML">
 				Run River job
 			</button>
-			<button class="min-h-10 w-full rounded-md border border-sky-300/40 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10" type="button" hx-post="/demo/pulse" hx-target="#composer-panel" hx-swap="outerHTML">
+			<button class="min-h-11 w-full rounded-md border border-sky-300/45 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25" type="button" hx-post="/demo/pulse" hx-target="#composer-panel" hx-swap="outerHTML">
 				Broadcast pulse
 			</button>
 		</div>
 		<div class="mt-5 space-y-3">
 			if len(events) == 0 {
-				<p class="rounded-md border border-white/10 bg-zinc-950/70 p-4 text-sm text-zinc-400">No events yet.</p>
+				<p class="rounded-md border border-white/10 bg-zinc-950/65 p-4 text-sm leading-6 text-zinc-400">No events yet. Create an item, run a job, or broadcast a pulse.</p>
 			}
 			for _, event := range events {
-				<div class="rounded-md border border-white/10 bg-zinc-950/70 p-4">
+				<div class="rounded-md border border-white/10 bg-zinc-950/65 p-4">
 					<div class="flex items-center justify-between gap-3">
 						<p class="text-sm font-semibold text-sky-100">{ event.Kind }</p>
-						<p class="text-xs text-zinc-400">{ shortTime(event.CreatedAt) }</p>
+						<p class="font-mono text-xs text-zinc-500">{ shortTime(event.CreatedAt) }</p>
 					</div>
 					<p class="mt-2 break-words text-sm leading-6 text-zinc-300">{ event.Body }</p>
 				</div>
@@ -234,79 +241,126 @@ templ EventsPanel(events []appmodel.Event, oob bool) {
 }
 
 templ AlpinePanel() {
-	<section id="alpine-panel" class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20" { attr("x-data", "{ localClicks: 0, mode: 'Dense' }")... }>
-		<h2 class="text-lg font-semibold text-white">Local UI island</h2>
-		<p class="mt-1 text-sm leading-6 text-zinc-400">Alpine owns local controls while server state stays on the server.</p>
-		<div class="mt-4 rounded-lg border border-white/10 bg-zinc-950/70 p-4">
+	<section id="alpine-panel" class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="alpine-heading" { attr("x-data", "{ localClicks: 0, density: 'Compact' }")... }>
+		<p class="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300">Alpine island</p>
+		<h2 id="alpine-heading" class="mt-2 text-lg font-semibold text-white">Local preferences</h2>
+		<p class="mt-1 text-sm leading-6 text-zinc-400">Client-only state can sit beside server-owned data without a SPA.</p>
+		<div class="mt-4 rounded-lg border border-white/10 bg-zinc-950/65 p-4">
 			<div class="grid grid-cols-2 gap-3 text-sm">
 				<div>
-					<p class="text-zinc-400">Local clicks</p>
-					<p class="mt-1 text-3xl font-semibold text-white" { attr("x-text", "localClicks")... }>0</p>
+					<p class="text-zinc-400">Preview clicks</p>
+					<p class="mt-1 font-mono text-3xl font-semibold text-white" { attr("x-text", "localClicks")... }>0</p>
 				</div>
 				<div>
-					<p class="text-zinc-400">Mode</p>
-					<p class="mt-2 font-semibold text-emerald-100" { attr("x-text", "mode")... }>Dense</p>
+					<p class="text-zinc-400">Density</p>
+					<p class="mt-2 font-semibold text-emerald-100" { attr("x-text", "density")... }>Compact</p>
 				</div>
 			</div>
-			<div class="mt-4 grid grid-cols-2 gap-2">
-				<button class="min-h-10 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200" type="button" { attr("@click", "localClicks++")... }>
-					Increment
+			<div class="mt-4 grid gap-2">
+				<button class="min-h-11 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200 focus-visible:ring-4 focus-visible:ring-white/25" type="button" { attr("@click", "localClicks++")... }>
+					Increment preview
 				</button>
-				<button class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-100 transition hover:border-emerald-300" type="button" { attr("@click", "mode = mode === 'Dense' ? 'Calm' : 'Dense'")... }>
-					Toggle mode
-				</button>
+				<div class="grid grid-cols-2 gap-2" role="group" aria-label="Density">
+					@DensityButton("Compact")
+					@DensityButton("Roomy")
+				</div>
 			</div>
 		</div>
 	</section>
+}
+
+templ DensityButton(label string) {
+	<button
+		class="min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-emerald-300/70 hover:bg-emerald-300/10 focus-visible:ring-4 focus-visible:ring-emerald-300/25"
+		type="button"
+		{ attr("@click", "density = '"+label+"'")... }
+		{ attr(":class", "density === '"+label+"' ? 'border-emerald-300 bg-emerald-300 text-zinc-950' : 'border-white/10 text-zinc-200'")... }
+		{ attr(":aria-pressed", "density === '"+label+"' ? 'true' : 'false'")... }
+	>
+		{ label }
+	</button>
+}
+
+templ HTTPContract() {
+	<section id="http" class="scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5" aria-labelledby="http-heading">
+		<div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+			<div>
+				<p class="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-300">HTTP contract</p>
+				<h2 id="http-heading" class="mt-2 text-2xl font-semibold text-white text-balance">Resources, methods, and responses stay obvious.</h2>
+			</div>
+			<p class="max-w-xl text-sm leading-6 text-zinc-400">Forms keep normal browser semantics where practical. HTMX upgrades command buttons, partial swaps, and live updates without adding a frontend app.</p>
+		</div>
+		<div class="mt-5 overflow-hidden rounded-lg border border-white/10">
+			@RouteRow("GET", "/", "Full HTML document", "Initial load returns a complete page with embedded CSS and pinned vendor assets.")
+			@RouteRow("POST", "/todos", "Validate and create", "Plain form posts work without JavaScript; HTMX receives the same composer plus OOB snapshots.")
+			@RouteRow("POST", "/todos/{id}/toggle", "State transition", "A small command route changes one resource and publishes a snapshot event.")
+			@RouteRow("DELETE", "/todos/{id}", "Delete resource", "The destructive action uses the HTTP verb the server actually handles.")
+			@RouteRow("GET", "/stream", "text/event-stream", "Connected browsers receive rendered fragments, not client-side cache instructions.")
+		</div>
+	</section>
+}
+
+templ RouteRow(method string, route string, title string, body string) {
+	<article class="grid gap-2 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 lg:grid-cols-[5rem_minmax(9rem,13rem)_minmax(0,1fr)] lg:items-start">
+		<p class="font-mono text-sm font-bold text-emerald-200">{ method }</p>
+		<p class="break-words font-mono text-sm text-zinc-200">{ route }</p>
+		<div>
+			<h3 class="font-semibold text-white">{ title }</h3>
+			<p class="mt-1 text-sm leading-6 text-zinc-400">{ body }</p>
+		</div>
+	</article>
 }
 
 templ CapabilityGrid() {
-	<section id="capabilities" class="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+	<section id="capabilities" class="scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5" aria-labelledby="capabilities-heading">
 		<div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
 			<div>
-				<p class="text-sm font-semibold uppercase text-amber-300">Capability map</p>
-				<h2 class="mt-2 text-2xl font-semibold text-white">Enough moving parts to build real products.</h2>
+				<p class="text-sm font-semibold uppercase tracking-[0.16em] text-amber-300">Production capabilities</p>
+				<h2 id="capabilities-heading" class="mt-2 text-2xl font-semibold text-white text-balance">Enough machinery for complex apps, kept small enough to trace.</h2>
 			</div>
-			<p class="max-w-xl text-sm leading-6 text-zinc-400">Each card maps to code that exists in this repo, not a theoretical integration.</p>
+			<p class="max-w-xl text-sm leading-6 text-zinc-400">Each row points at checked-in code. No invisible platform layer, no hidden frontend build.</p>
 		</div>
-		<div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-			@CapabilityCard("HTTP", "Stdlib routing", "Method-aware ServeMux routes keep request flow obvious.", "internal/server/app.go")
-			@CapabilityCard("HTML", "templ components", "Typed server components render full pages and HTMX fragments.", "internal/ui/home.templ")
-			@CapabilityCard("Data", "sqlc plus pgx", "Raw SQL remains visible while Go gets generated typed methods.", "internal/db/query/todos.sql")
-			@CapabilityCard("Migrate", "Goose migrations", "App schema changes live as embedded SQL migrations.", "internal/db/migrations")
-			@CapabilityCard("Jobs", "River workers", "Durable background jobs run from the same Postgres backbone.", "internal/jobs")
-			@CapabilityCard("Realtime", "SSE and fanout", "Connected browsers receive full server snapshots over HTMX SSE.", "internal/realtime")
+		<div class="mt-5 divide-y divide-white/10 rounded-lg border border-white/10 bg-zinc-950/55">
+			@CapabilityRow("Server-rendered UI", "templ renders full pages and partials with typed Go data.", "internal/ui/home.templ")
+			@CapabilityRow("Typed persistence", "sqlc keeps SQL readable while generating pgx methods.", "internal/db/query/todos.sql")
+			@CapabilityRow("Schema ownership", "Goose migrations are embedded and run beside the app.", "internal/db/migrations")
+			@CapabilityRow("Durable background work", "River workers share the Postgres backbone for retryable jobs.", "internal/jobs")
+			@CapabilityRow("Realtime fanout", "SSE delivers server-rendered OOB swaps over a memory or NATS bus.", "internal/realtime")
+			@CapabilityRow("Local delivery", "Tailwind output and browser libraries are vendored and embedded.", "web/assets")
 		</div>
 	</section>
 }
 
-templ CapabilityCard(kicker string, title string, body string, proof string) {
-	<article class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
-		<p class="text-xs font-semibold uppercase text-zinc-400">{ kicker }</p>
-		<h3 class="mt-2 text-lg font-semibold text-white">{ title }</h3>
-		<p class="mt-2 text-sm leading-6 text-zinc-400">{ body }</p>
-		<p class="mt-4 rounded-md bg-white/5 px-3 py-2 font-mono text-xs text-zinc-300">{ proof }</p>
+templ CapabilityRow(title string, body string, proof string) {
+	<article class="grid gap-2 p-4 md:grid-cols-[minmax(10rem,0.26fr)_minmax(0,1fr)_minmax(12rem,0.32fr)] md:items-center">
+		<h3 class="font-semibold text-white">{ title }</h3>
+		<p class="text-sm leading-6 text-zinc-400">{ body }</p>
+		<p class="break-words rounded-md bg-white/5 px-3 py-2 font-mono text-xs text-zinc-300">{ proof }</p>
 	</article>
 }
 
 templ RecipeBoard() {
-	<section id="recipes" class="rounded-lg border border-white/10 bg-white/[0.04] p-5" { attr("x-data", "{ recipe: 'saas' }")... }>
-		<p class="text-sm font-semibold uppercase text-sky-300">App recipes</p>
-		<h2 class="mt-2 text-2xl font-semibold text-white">The same stack stretches across common product shapes.</h2>
+	<section id="recipes" class="scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5" aria-labelledby="recipes-heading" { attr("x-data", "{ recipe: 'billing' }")... }>
+		<p class="text-sm font-semibold uppercase tracking-[0.16em] text-sky-300">App shapes</p>
+		<h2 id="recipes-heading" class="mt-2 text-2xl font-semibold text-white text-balance">The same primitives cover product surfaces that usually drift into complexity.</h2>
 		<div class="mt-5 flex flex-wrap gap-2">
-			@RecipeButton("saas", "SaaS dashboard")
+			@RecipeButton("billing", "Billing SaaS")
 			@RecipeButton("ops", "Ops console")
 			@RecipeButton("collab", "Realtime workspace")
+			@RecipeButton("data", "Data platform")
 		</div>
 		<div class="mt-5">
-			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" { attr("x-show", "recipe === 'saas'")... }>
-				@RecipeContent("SaaS dashboard", "Serve authenticated pages, mutate records with HTMX forms, run billing or imports in River, and stream account-level updates through SSE.", "Go handlers -> templ -> sqlc -> Postgres -> River")
+			<div class="rounded-lg border border-white/10 bg-zinc-950/60 p-5" { attr("x-show", "recipe === 'billing'")... }>
+				@RecipeContent("Billing SaaS", "Account settings, subscriptions, invoices, import status, and support actions as server-rendered pages.", "Webhook ingestion and invoice sync run in River; account pages update through SSE when workers finish.", "ServeMux -> templ -> sqlc -> Postgres -> River")
 			</div>
-			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" style="display: none;" { attr("x-show", "recipe === 'ops'")... }>
-				@RecipeContent("Ops console", "Render dense tables, provide server-side filters, enqueue repair jobs, and broadcast fresh snapshots when workers finish.", "ServeMux -> query params -> sqlc -> River -> SSE")
+			<div class="rounded-lg border border-white/10 bg-zinc-950/60 p-5" style="display: none;" { attr("x-show", "recipe === 'ops'")... }>
+				@RecipeContent("Ops console", "Dense tables, audit trails, repair actions, and scoped filters with URLs that can be shared.", "Handlers validate query params, execute typed SQL, enqueue repair jobs, and stream completion events.", "Query params -> sqlc -> River -> SSE")
 			</div>
-			<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-5" style="display: none;" { attr("x-show", "recipe === 'collab'")... }>
-				@RecipeContent("Realtime workspace", "Keep durable state in Postgres, use NATS only for ephemeral fanout, and let each tab reconcile from full server snapshots.", "Postgres truth -> NATS fanout -> HTMX OOB swaps")
+			<div class="rounded-lg border border-white/10 bg-zinc-950/60 p-5" style="display: none;" { attr("x-show", "recipe === 'collab'")... }>
+				@RecipeContent("Realtime workspace", "Multi-user task boards, review queues, presence-adjacent signals, and activity timelines.", "Postgres remains the source of truth; NATS is only ephemeral fanout for connected tabs.", "Postgres truth -> bus fanout -> OOB swaps")
+			</div>
+			<div class="rounded-lg border border-white/10 bg-zinc-950/60 p-5" style="display: none;" { attr("x-show", "recipe === 'data'")... }>
+				@RecipeContent("Data platform", "Long-running imports, validation queues, export jobs, and operator-visible progress.", "Durable jobs write checkpoints and events that the UI can display without polling-heavy client state.", "Upload/form -> River -> events -> SSE")
 			</div>
 		</div>
 	</section>
@@ -314,48 +368,66 @@ templ RecipeBoard() {
 
 templ RecipeButton(key string, label string) {
 	<button
-		class="min-h-10 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-sky-300"
+		class="min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-sky-300 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25"
 		type="button"
 		{ attr("@click", "recipe = '"+key+"'")... }
-		{ attr(":class", "recipe === '"+key+"' ? 'bg-sky-300 text-zinc-950 border-sky-300' : 'bg-transparent'")... }
+		{ attr(":class", "recipe === '"+key+"' ? 'border-sky-300 bg-sky-300 text-zinc-950' : 'border-white/10 bg-transparent text-zinc-200'")... }
 		{ attr(":aria-pressed", "recipe === '"+key+"' ? 'true' : 'false'")... }
 	>
 		{ label }
 	</button>
 }
 
-templ RecipeContent(title string, body string, path string) {
-	<h3 class="text-xl font-semibold text-white">{ title }</h3>
-	<p class="mt-3 text-sm leading-6 text-zinc-300">{ body }</p>
-	<p class="mt-4 rounded-md border border-sky-300/20 bg-sky-300/10 px-3 py-2 font-mono text-xs text-sky-100">{ path }</p>
+templ RecipeContent(title string, surface string, system string, path string) {
+	<div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.36fr)]">
+		<div>
+			<h3 class="text-xl font-semibold text-white">{ title }</h3>
+			<dl class="mt-4 space-y-4">
+				@RecipeDetail("User surface", surface)
+				@RecipeDetail("System work", system)
+			</dl>
+		</div>
+		<div class="rounded-lg border border-sky-300/20 bg-sky-300/10 p-4">
+			<p class="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200">Path</p>
+			<p class="mt-3 break-words font-mono text-sm leading-6 text-sky-50">{ path }</p>
+		</div>
+	</div>
+}
+
+templ RecipeDetail(label string, body string) {
+	<div>
+		<dt class="text-sm font-semibold text-zinc-200">{ label }</dt>
+		<dd class="mt-1 text-sm leading-6 text-zinc-400">{ body }</dd>
+	</div>
 }
 
 templ StackFlow() {
-	<section class="rounded-lg border border-white/10 bg-white/[0.04] p-5">
-		<p class="text-sm font-semibold uppercase text-rose-300">Request path</p>
-		<h2 class="mt-2 text-2xl font-semibold text-white">Traceable from browser action to browser update.</h2>
-		<div class="mt-5 grid gap-3 md:grid-cols-5">
-			@FlowStep("1", "Browser", "Form, button, or SSE connection")
+	<section class="rounded-lg border border-white/10 bg-zinc-900/75 p-5" aria-labelledby="flow-heading">
+		<p class="text-sm font-semibold uppercase tracking-[0.16em] text-rose-300">Request lifecycle</p>
+		<h2 id="flow-heading" class="mt-2 text-2xl font-semibold text-white text-balance">Trace a browser action all the way back to the browser.</h2>
+		<ol class="mt-5 grid gap-3 md:grid-cols-5">
+			@FlowStep("1", "Browser", "Plain form, button, or SSE connection")
 			@FlowStep("2", "ServeMux", "Small handler with local validation")
 			@FlowStep("3", "Postgres", "sqlc query inside a transaction")
-			@FlowStep("4", "Job or event", "River for durable work, bus for fanout")
-			@FlowStep("5", "HTML patch", "templ fragment with OOB swaps")
-		</div>
+			@FlowStep("4", "Work", "River job or bus event")
+			@FlowStep("5", "Patch", "templ fragment with OOB swaps")
+		</ol>
 	</section>
 }
 
 templ FlowStep(number string, title string, body string) {
-	<div class="rounded-lg border border-white/10 bg-zinc-950/70 p-4">
-		<p class="flex h-8 w-8 items-center justify-center rounded-md bg-rose-300 text-sm font-bold text-zinc-950">{ number }</p>
+	<li class="min-h-40 rounded-lg border border-white/10 bg-zinc-950/60 p-4">
+		<p class="flex h-9 w-9 items-center justify-center rounded-md bg-rose-300 font-mono text-sm font-bold text-zinc-950">{ number }</p>
 		<h3 class="mt-4 font-semibold text-white">{ title }</h3>
 		<p class="mt-2 text-sm leading-6 text-zinc-400">{ body }</p>
-	</div>
+	</li>
 }
 
 templ CommandCenter() {
-	<section class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
-		<h2 class="text-lg font-semibold text-white">Developer loop</h2>
-		<p class="mt-1 text-sm leading-6 text-zinc-400">The command surface stays local and small.</p>
+	<section class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="commands-heading">
+		<p class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">Local loop</p>
+		<h2 id="commands-heading" class="mt-2 text-lg font-semibold text-white">Quality gates</h2>
+		<p class="mt-1 text-sm leading-6 text-zinc-400">The command surface stays local, explicit, and easy to run in CI.</p>
 		<div class="mt-4 space-y-3">
 			@CommandRow("mise run dev", "Generate, build CSS, and run")
 			@CommandRow("mise run regenerate", "Refresh sqlc, templ, and CSS")
@@ -366,15 +438,16 @@ templ CommandCenter() {
 }
 
 templ CommandRow(command string, body string) {
-	<div class="rounded-md border border-white/10 bg-zinc-950/70 p-3">
-		<p class="font-mono text-sm text-white">{ command }</p>
+	<div class="rounded-md border border-white/10 bg-zinc-950/65 p-3">
+		<p class="break-words font-mono text-sm text-white">{ command }</p>
 		<p class="mt-1 text-xs leading-5 text-zinc-400">{ body }</p>
 	</div>
 }
 
 templ VersionPanel(v appmodel.VersionInfo) {
-	<section class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20">
-		<h2 class="text-lg font-semibold text-white">Pinned stack</h2>
+	<section class="rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20" aria-labelledby="versions-heading">
+		<p class="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Pinned stack</p>
+		<h2 id="versions-heading" class="mt-2 text-lg font-semibold text-white">Versions</h2>
 		<dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
 			@VersionRow("Go", v.Go)
 			@VersionRow("HTMX", v.HTMX)

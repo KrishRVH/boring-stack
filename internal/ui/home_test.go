@@ -22,6 +22,9 @@ func TestHomeUsesHTMXSSEAndAlpineAssets(t *testing.T) {
 		`/assets/vendor/htmx.min.js`,
 		`/assets/vendor/sse.min.js`,
 		`/assets/vendor/alpine.min.js`,
+		`"allowEval":false`,
+		`"allowScriptTags":false`,
+		`"includeIndicatorStyles":false`,
 		`hx-ext="sse"`,
 		`sse-connect="/stream"`,
 		`sse-swap="snapshot"`,
@@ -31,8 +34,9 @@ func TestHomeUsesHTMXSSEAndAlpineAssets(t *testing.T) {
 		`x-text=`,
 		`/demo/pulse`,
 		`/demo/seed`,
-		`Capability map`,
-		`Request path`,
+		`HTTP contract`,
+		`Production capabilities`,
+		`Request lifecycle`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered home missing %q", want)

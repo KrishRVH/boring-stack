@@ -99,17 +99,20 @@ a starter, because the first screen should prove what this boring stack can do
 without sending you to a slide deck.
 
 - Add, toggle, and delete workflow items backed by Postgres and sqlc.
-- Click `Seed flow` to idempotently add a small app-building workflow.
+- Click `Load sample plan` to idempotently add a small app-building workflow.
 - Click `Broadcast pulse` to write an event and fan out a server snapshot.
 - Click `Run River job` to enqueue durable work, write job output, and refresh
   connected browsers.
 - Use the local Alpine island to change browser-only UI state without touching
   trusted server state.
 - Open two browser tabs and watch both tabs converge through HTMX SSE updates.
+- Inspect the HTTP contract, local quality gates, and pinned runtime versions
+  from the rendered page.
 
-The page also includes capability, recipe, request-path, command-loop, runtime,
-and version panels. Those panels are still server-rendered HTML from the same
-templ file, not a separate docs app or frontend build.
+The page also includes production capability rows, app-shape recipes, a request
+lifecycle, runtime side panels, and version details. Those panels are still
+server-rendered HTML from the same templ file, not a separate docs app or
+frontend build.
 
 ## Stack Choices
 
@@ -136,6 +139,23 @@ a.mux.HandleFunc("POST /todos/{id}/toggle", a.toggleTodo)
 
 No framework is introduced just to route requests. For this kind of starter,
 the stdlib gives enough shape without creating a second vocabulary.
+
+### HTTP Security Headers
+
+Every route goes through a small `net/http` middleware that sets boring browser
+defenses: a Content Security Policy, frame denial, `nosniff`, referrer policy,
+cross-origin isolation headers, and a locked-down permissions policy.
+
+The Content Security Policy is deliberately a production middle ground. It
+allows only same-origin assets, disables HTMX eval and script swaps through the
+page's `htmx-config` meta tag, and keeps the two current UI concessions explicit:
+Alpine's standard build needs `script-src 'unsafe-eval'`, and the local UI
+islands use inline style behavior that needs `style-src 'unsafe-inline'`.
+
+Strict Transport Security is emitted only when the request is already HTTPS or a
+trusted reverse proxy reports HTTPS through forwarded headers. Local HTTP stays
+easy to run; production TLS termination, redirects, and preload policy belong at
+the deployment edge.
 
 ### Server-Rendered HTML
 
@@ -555,6 +575,7 @@ Some choices should be made by the real product, not by a starter:
 - authentication and sessions;
 - CSRF policy;
 - authorization and tenant boundaries;
+- TLS termination, HTTPS redirects, and HSTS preload policy;
 - user/account/org tables;
 - API versioning and JSON shape;
 - file uploads;
