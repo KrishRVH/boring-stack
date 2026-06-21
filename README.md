@@ -499,6 +499,7 @@ TEST_DATABASE_URL='postgres://app:app@localhost:5432/app_test?sslmode=disable' m
 ```text
 cmd/server              app entrypoint
 cmd/migrate             Goose and River migration entrypoint
+compose.yaml            local Postgres and NATS service model
 internal/config         environment config
 internal/server         HTTP routes, handlers, middleware-ish helpers
 internal/ui             templ components and generated templ Go

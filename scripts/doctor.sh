@@ -82,9 +82,9 @@ check_compose_config() {
   fi
 
   if docker compose config -q >/dev/null 2>&1; then
-    ok "docker-compose.yml renders with mise environment"
+    ok "compose.yaml renders with mise environment"
   else
-    mark_fail "docker-compose.yml did not render. Run this through mise so POSTGRES_IMAGE and NATS_IMAGE are set: mise run up"
+    mark_fail "compose.yaml did not render. Run this through mise so POSTGRES_IMAGE and NATS_IMAGE are set: mise run up"
 	fi
 }
 

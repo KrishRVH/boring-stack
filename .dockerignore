@@ -5,6 +5,7 @@
 .gitignore
 .gstack/
 .mise.local.toml
+compose.yaml
 bin/
 coverage/
 dist/
