@@ -25,6 +25,37 @@ func TestNewWiresSecurityHeaders(t *testing.T) {
 	assertHeader(t, rec.Result().Header, "X-Content-Type-Options", "nosniff")
 }
 
+func TestNewWiresCrossOriginProtection(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	app := New("127.0.0.1:0", logger, nil, realtime.NewMemoryBus(), nil)
+
+	tests := []struct {
+		name   string
+		method string
+		site   string
+		want   int
+	}{
+		{name: "cross-site mutation", method: http.MethodPost, site: "cross-site", want: http.StatusForbidden},
+		{name: "same-origin mutation", method: http.MethodPost, site: "same-origin", want: http.StatusMethodNotAllowed},
+		{name: "cross-site safe request", method: http.MethodGet, site: "cross-site", want: http.StatusNoContent},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequestWithContext(context.Background(), tt.method, "/healthz", nil)
+			req.Header.Set("Sec-Fetch-Site", tt.site)
+
+			app.server.Handler.ServeHTTP(rec, req)
+
+			if rec.Code != tt.want {
+				t.Fatalf("status = %d, want %d", rec.Code, tt.want)
+			}
+			assertHeader(t, rec.Result().Header, "Content-Security-Policy", contentSecurityPolicy)
+		})
+	}
+}
+
 func TestSecurityHeadersAreSet(t *testing.T) {
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)

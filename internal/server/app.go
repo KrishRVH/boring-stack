@@ -62,9 +62,10 @@ func New(addr string, logger *slog.Logger, pool *pgxpool.Pool, bus realtime.Bus,
 		stopStreams:    stopStreams,
 	}
 	app.routes()
+	crossOriginProtection := http.NewCrossOriginProtection()
 	app.server = &http.Server{
 		Addr:              addr,
-		Handler:           app.requestLogger(app.securityHeaders(app.mux)),
+		Handler:           app.requestLogger(app.securityHeaders(crossOriginProtection.Handler(app.mux))),
 		ReadHeaderTimeout: 5 * time.Second,
 		IdleTimeout:       90 * time.Second,
 	}
@@ -510,10 +511,6 @@ func (a *App) viewModel(ctx context.Context) (appmodel.HomeView, error) {
 	if err != nil {
 		return appmodel.HomeView{}, err
 	}
-	stats, err := a.q.CountTodos(ctx)
-	if err != nil {
-		return appmodel.HomeView{}, err
-	}
 	events, err := a.q.ListEvents(ctx, 10)
 	if err != nil {
 		return appmodel.HomeView{}, err
@@ -522,11 +519,14 @@ func (a *App) viewModel(ctx context.Context) (appmodel.HomeView, error) {
 	vm := appmodel.HomeView{
 		Todos:   make([]appmodel.Todo, 0, len(todos)),
 		Events:  make([]appmodel.Event, 0, len(events)),
-		Stats:   appmodel.Stats{Total: stats.Total, Done: stats.Done},
+		Stats:   appmodel.Stats{Total: int64(len(todos))},
 		BusName: a.bus.Name(),
 		Version: versionInfo(),
 	}
 	for _, todo := range todos {
+		if todo.Done {
+			vm.Stats.Done++
+		}
 		vm.Todos = append(vm.Todos, appmodel.Todo{
 			ID:        todo.ID,
 			Body:      todo.Body,

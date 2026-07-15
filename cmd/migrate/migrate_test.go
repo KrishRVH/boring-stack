@@ -50,7 +50,10 @@ func TestMigrationsAndQueries(t *testing.T) {
 		t.Fatal("river_job table does not exist")
 	}
 
+	assertTodoConstraints(ctx, t, pool)
 	queries := db.New(pool)
+	assertTodoBodyConstraints(ctx, t, queries)
+
 	body := "integration todo " + strings.ReplaceAll(t.Name(), "/", "-")
 	created, err := queries.CreateTodo(ctx, body)
 	if err != nil {
@@ -75,6 +78,41 @@ func TestMigrationsAndQueries(t *testing.T) {
 	}
 	if deleted.ID != created.ID {
 		t.Fatalf("DeleteTodo deleted %q, want %q", deleted.ID, created.ID)
+	}
+}
+
+func assertTodoConstraints(ctx context.Context, t *testing.T, pool *pgxpool.Pool) {
+	t.Helper()
+
+	var count int
+	var hasBodyCheck, hasMaxLengthCheck bool
+	if err := pool.QueryRow(ctx, `
+SELECT
+	count(*)::int,
+	bool_or(conname = 'todos_body_check'),
+	bool_or(conname = 'todos_body_max_length_check')
+FROM pg_constraint
+WHERE conrelid = 'todos'::regclass
+	AND contype = 'c'
+`).Scan(&count, &hasBodyCheck, &hasMaxLengthCheck); err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 || !hasBodyCheck || !hasMaxLengthCheck {
+		t.Fatalf("todo check constraints = count %d, body %t, max length %t", count, hasBodyCheck, hasMaxLengthCheck)
+	}
+}
+
+func assertTodoBodyConstraints(ctx context.Context, t *testing.T, queries *db.Queries) {
+	t.Helper()
+
+	if _, err := queries.CreateTodo(ctx, "   "); err == nil {
+		t.Fatal("CreateTodo accepted a blank body")
+	}
+	if _, err := queries.CreateTodo(ctx, strings.Repeat("界", 281)); err == nil {
+		t.Fatal("CreateTodo accepted a 281-character body")
+	}
+	if _, err := queries.CreateTodo(ctx, strings.Repeat("界", 280)); err != nil {
+		t.Fatalf("CreateTodo rejected a 280-character body: %v", err)
 	}
 }
 

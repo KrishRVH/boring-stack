@@ -157,6 +157,17 @@ trusted reverse proxy reports HTTPS through forwarded headers. Local HTTP stays
 easy to run; production TLS termination, redirects, and preload policy belong at
 the deployment edge.
 
+Every route is also wrapped with Go's
+[`http.CrossOriginProtection`](https://pkg.go.dev/net/http#CrossOriginProtection).
+It rejects unsafe same-site and cross-site browser requests, and falls back to
+comparing `Origin` with `Host` when Fetch Metadata is absent. Requests with
+neither header receive no cross-origin check. That preserves non-browser
+compatibility, but any client omitting both signals is allowed. `GET`, `HEAD`,
+and `OPTIONS` always pass, so safe methods must never mutate state. Add trusted
+origins or narrow bypasses only for deliberate cross-origin write endpoints;
+authentication, authorization, cookie policy, and same-origin compromise remain
+separate concerns.
+
 ### Server-Rendered HTML
 
 The app renders HTML on the server because most product UI is still forms,
@@ -217,6 +228,11 @@ that normal HTMX mutations return.
 The app sends full UI snapshots over SSE instead of tiny imperative patches. That
 is less clever and more reliable. If a tab misses an event or receives two events
 close together, the next snapshot still describes the full current browser state.
+
+That simplicity has a clear ceiling: every delivered invalidation makes every
+connected stream reread current state and rerender the panels, so work grows with
+connected clients multiplied by mutations. Keep it until measurements say
+otherwise, then coalesce invalidations or introduce a shared snapshot cache.
 
 ### Alpine.js
 
@@ -285,6 +301,10 @@ The demo schema is tiny, but the foundation is production-shaped:
 - durable jobs live in Postgres through River;
 - migrations are explicit;
 - integration tests can run against an isolated `TEST_DATABASE_URL`.
+
+Todo IDs deliberately store generated UUIDs as text so sqlc models and HTTP path
+handling use plain Go strings. Native PostgreSQL `uuid` keys are more compact;
+switch when key and index scale justifies the extra type handling.
 
 ### pgx
 
@@ -582,7 +602,8 @@ their build args from `mise run docker-build`; prefer that task over calling
 Some choices should be made by the real product, not by a starter:
 
 - authentication and sessions;
-- CSRF policy;
+- CSRF tokens or cross-origin exceptions when an application's flows need more
+  than the default cross-origin protection;
 - authorization and tenant boundaries;
 - TLS termination, HTTPS redirects, and HSTS preload policy;
 - user/account/org tables;

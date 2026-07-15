@@ -54,6 +54,7 @@ func TestHTTPHTMXTodoMutations(t *testing.T) {
 	assertStatus(t, toggle, http.StatusOK)
 	assertContains(t, toggle.Body.String(), `id="todos-panel"`)
 	assertContains(t, toggle.Body.String(), `hx-swap-oob="outerHTML"`)
+	assertViewStatsMatchTodos(t, app)
 
 	events, err := app.q.ListEvents(context.Background(), 10)
 	if err != nil {
@@ -297,6 +298,28 @@ func countTodoBody(todos []db.Todo, body string) int {
 		}
 	}
 	return count
+}
+
+func assertViewStatsMatchTodos(t *testing.T, app *App) {
+	t.Helper()
+
+	vm, err := app.viewModel(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if vm.Stats.Total != int64(len(vm.Todos)) {
+		t.Fatalf("total stats = %d, rendered todos = %d", vm.Stats.Total, len(vm.Todos))
+	}
+
+	var done int64
+	for _, todo := range vm.Todos {
+		if todo.Done {
+			done++
+		}
+	}
+	if vm.Stats.Done != done {
+		t.Fatalf("done stats = %d, rendered done todos = %d", vm.Stats.Done, done)
+	}
 }
 
 func readUntil(t *testing.T, r io.Reader, want string) string {
