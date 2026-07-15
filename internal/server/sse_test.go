@@ -74,8 +74,8 @@ func TestValidateTodoBody(t *testing.T) {
 		body string
 		want string
 	}{
-		{name: "empty", body: "", want: "Todo body is required."},
-		{name: "whitespace", body: " \t\n ", want: "Todo body is required."},
+		{name: "empty", body: "", want: todoBodyRequired},
+		{name: "whitespace", body: " \t\n ", want: todoBodyRequired},
 		{name: "exact max ascii", body: strings.Repeat("x", appmodel.MaxTodoBodyLength), want: ""},
 		{name: "over max ascii", body: strings.Repeat("x", appmodel.MaxTodoBodyLength+1), want: "Todo body must be 280 characters or fewer."},
 		{name: "exact max multibyte", body: strings.Repeat("界", appmodel.MaxTodoBodyLength), want: ""},

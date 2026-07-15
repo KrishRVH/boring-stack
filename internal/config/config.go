@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Config contains the application's runtime configuration.
 type Config struct {
 	Addr     string
 	AppEnv   string
@@ -15,6 +16,7 @@ type Config struct {
 	NATSURL  string
 }
 
+// Load reads Config from the environment and applies local defaults.
 func Load() Config {
 	return Config{
 		Addr:     env("ADDR", ":8080"),

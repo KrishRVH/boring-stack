@@ -35,7 +35,7 @@ func TestMigrationsAndQueries(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer pool.Close()
-	resetTestData(t, ctx, pool)
+	resetTestData(ctx, t, pool)
 	defer func() {
 		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cleanupCancel()
@@ -78,7 +78,7 @@ func TestMigrationsAndQueries(t *testing.T) {
 	}
 }
 
-func resetTestData(t *testing.T, ctx context.Context, pool *pgxpool.Pool) {
+func resetTestData(ctx context.Context, t *testing.T, pool *pgxpool.Pool) {
 	t.Helper()
 	if _, err := pool.Exec(ctx, `TRUNCATE todos, app_events RESTART IDENTITY CASCADE`); err != nil {
 		t.Fatal(err)

@@ -17,15 +17,18 @@ fi
 
 arch="$(uname -m)"
 case "$arch" in
-  x86_64|amd64)
+  x86_64 | amd64)
     twarch="x64"
     expected_sha="$TAILWIND_LINUX_X64_SHA256"
     ;;
-  aarch64|arm64)
+  aarch64 | arm64)
     twarch="arm64"
     expected_sha="$TAILWIND_LINUX_ARM64_SHA256"
     ;;
-  *) echo "unsupported arch: $arch" >&2; exit 1 ;;
+  *)
+    echo "unsupported arch: $arch" >&2
+    exit 1
+    ;;
 esac
 
 url="https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-${twarch}"
@@ -48,7 +51,7 @@ if [[ -n "$expected_sha" ]]; then
   fi
 fi
 chmod +x "$tmp"
-"$tmp" --version >/dev/null 2>&1
+"$tmp" --version > /dev/null 2>&1
 mv "$tmp" "$out"
 trap - EXIT
 echo "Installed Tailwind CSS ${TAILWIND_VERSION} at ${out}"

@@ -9,6 +9,7 @@ import (
 //go:embed assets
 var embedded embed.FS
 
+// Assets returns the embedded browser assets as an HTTP file system.
 func Assets() http.FileSystem {
 	sub, err := fs.Sub(embedded, "assets")
 	if err != nil {

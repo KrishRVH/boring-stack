@@ -11,7 +11,7 @@ fi
 
 if ! go run ./cmd/migrate; then
   fail "Migrations failed."
-  cat >&2 <<'EOF'
+  cat >&2 << 'EOF'
 Check:
   mise exec -- docker compose ps
   mise exec -- docker compose logs postgres

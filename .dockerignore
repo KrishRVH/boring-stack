@@ -10,6 +10,7 @@ bin/
 coverage/
 dist/
 out/
+sbom/
 tmp/
 *.log
 .DS_Store

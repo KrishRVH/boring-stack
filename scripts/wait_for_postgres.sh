@@ -7,8 +7,8 @@ cd "$PROJECT_ROOT"
 
 require_docker
 
-for i in {1..60}; do
-  if docker compose exec -T postgres pg_isready -U app -d app >/dev/null 2>&1; then
+for _ in {1..60}; do
+  if docker compose exec -T postgres pg_isready -U app -d app > /dev/null 2>&1; then
     echo "Postgres is ready."
     exit 0
   fi
@@ -16,7 +16,7 @@ for i in {1..60}; do
 done
 
 fail "Postgres did not become ready in 60 seconds."
-cat >&2 <<'EOF'
+cat >&2 << 'EOF'
 Try:
   mise run up
   mise exec -- docker compose ps

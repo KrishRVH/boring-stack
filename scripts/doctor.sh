@@ -21,7 +21,7 @@ mark_warn() {
 }
 
 check_mise() {
-  if command -v mise >/dev/null 2>&1; then
+  if command -v mise > /dev/null 2>&1; then
     ok "mise is installed: $(mise --version | head -n 1)"
   else
     mark_fail "mise is missing. Install it with: curl https://mise.run | sh"
@@ -31,17 +31,17 @@ check_mise() {
 check_go() {
   local want have
   want="$(go_toolchain_version)"
-  if ! command -v go >/dev/null 2>&1; then
+  if ! command -v go > /dev/null 2>&1; then
     mark_fail "Go is missing from PATH. Run: mise install"
     return
   fi
 
-  have="$(go env GOVERSION 2>/dev/null | sed 's/^go//')"
+  have="$(go env GOVERSION 2> /dev/null | sed 's/^go//')"
   if [[ "$have" == "$want" ]]; then
     ok "Go version matches go.mod toolchain: $have"
   else
     mark_fail "Go version is $have, expected $want from go.mod toolchain. Run: mise install"
-	fi
+  fi
 }
 
 check_goose_pin() {
@@ -51,7 +51,7 @@ check_goose_pin() {
     return
   fi
 
-  have="$(go list -m -f '{{.Version}}' github.com/pressly/goose/v3 2>/dev/null || true)"
+  have="$(go list -m -f '{{.Version}}' github.com/pressly/goose/v3 2> /dev/null || true)"
   if [[ "$have" == "$want" ]]; then
     ok "Goose version matches go.mod: $have"
   else
@@ -81,11 +81,11 @@ check_compose_config() {
     return
   fi
 
-  if docker compose config -q >/dev/null 2>&1; then
+  if docker compose config -q > /dev/null 2>&1; then
     ok "compose.yaml renders with mise environment"
   else
     mark_fail "compose.yaml did not render. Run this through mise so POSTGRES_IMAGE and NATS_IMAGE are set: mise run up"
-	fi
+  fi
 }
 
 check_compose_ports() {
@@ -127,8 +127,7 @@ check_assets() {
   for path in \
     web/assets/vendor/htmx.min.js \
     web/assets/vendor/sse.min.js \
-    web/assets/vendor/alpine.min.js
-  do
+    web/assets/vendor/alpine.min.js; do
     if [[ -s "$path" ]]; then
       ok "Browser asset exists: $path"
     else
@@ -140,7 +139,7 @@ check_assets() {
   if [[ "$missing_js" -ne 0 ]]; then
     mark_warn "Browser JS bundles are missing. Run: mise run vendor-js"
   elif [[ -f web/assets/vendor/checksums.sha256 ]]; then
-    if (cd web/assets/vendor && sha256sum -c checksums.sha256 >/dev/null 2>&1); then
+    if (cd web/assets/vendor && sha256sum -c checksums.sha256 > /dev/null 2>&1); then
       ok "Browser asset checksums match"
     else
       mark_warn "Browser asset checksums do not match. Run: mise run vendor-js"
@@ -158,8 +157,7 @@ check_generated_files_exist() {
     internal/db/models.go \
     internal/db/querier.go \
     internal/db/todos.sql.go \
-    internal/ui/home_templ.go
-  do
+    internal/ui/home_templ.go; do
     if [[ ! -s "$path" ]]; then
       warn "Missing generated file: $path"
       missing=1
@@ -184,7 +182,7 @@ check_database() {
     return
   fi
 
-  if docker compose exec -T postgres pg_isready -U app -d app >/dev/null 2>&1; then
+  if docker compose exec -T postgres pg_isready -U app -d app > /dev/null 2>&1; then
     ok "Postgres is reachable"
   else
     mark_warn "Postgres is not ready. Run: mise run wait-db, or inspect logs with: mise exec -- docker compose logs postgres"

@@ -29,6 +29,7 @@ import (
 	webassets "github.com/KrishRVH/boring-stack/web"
 )
 
+// App serves the HTTP application.
 type App struct {
 	cfg    config.Config
 	log    *slog.Logger
@@ -43,8 +44,13 @@ type App struct {
 	stopStreams    context.CancelFunc
 }
 
-const maxFormBodyBytes = 16 << 10
+const (
+	maxFormBodyBytes = 16 << 10
+	todoEventKind    = "todo"
+	todoBodyRequired = "Todo body is required."
+)
 
+// New builds an App and registers its routes.
 func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtime.Bus, riverClient *river.Client[pgx.Tx]) *App {
 	streamShutdown, stopStreams := context.WithCancel(context.Background())
 	app := &App{
@@ -68,6 +74,7 @@ func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtim
 	return app
 }
 
+// ListenAndServe starts the HTTP server.
 func (a *App) ListenAndServe() error {
 	a.log.Info("server listening", "addr", a.cfg.Addr, "bus", a.bus.Name())
 	if err := a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -76,6 +83,7 @@ func (a *App) ListenAndServe() error {
 	return nil
 }
 
+// Shutdown stops open streams and gracefully shuts down the HTTP server.
 func (a *App) Shutdown(ctx context.Context) error {
 	a.stopStreams()
 	return a.server.Shutdown(ctx)
@@ -166,7 +174,10 @@ func (a *App) stream(w http.ResponseWriter, r *http.Request) {
 
 	heartbeat := time.NewTicker(30 * time.Second)
 	defer heartbeat.Stop()
+	a.runStream(ctx, w, flusher, events, heartbeat.C)
+}
 
+func (a *App) runStream(ctx context.Context, w http.ResponseWriter, flusher http.Flusher, events <-chan realtime.Event, heartbeat <-chan time.Time) {
 	for {
 		select {
 		case <-a.streamShutdown.Done():
@@ -183,7 +194,7 @@ func (a *App) stream(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			flusher.Flush()
-		case <-heartbeat.C:
+		case <-heartbeat:
 			if _, err := fmt.Fprint(w, ": heartbeat\n\n"); err != nil {
 				return
 			}
@@ -211,7 +222,7 @@ func (a *App) createTodo(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: "todo", Body: "created: " + created.Body})
+		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: todoEventKind, Body: "created: " + created.Body})
 		return err
 	})
 	if err != nil {
@@ -243,7 +254,7 @@ func (a *App) toggleTodo(w http.ResponseWriter, r *http.Request) {
 			state = "done"
 		}
 		body := fmt.Sprintf("marked %s: %s", state, updated.Body)
-		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: "todo", Body: body})
+		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: todoEventKind, Body: body})
 		return err
 	})
 	if err != nil {
@@ -268,7 +279,7 @@ func (a *App) deleteTodo(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: "todo", Body: "deleted: " + deleted.Body})
+		_, err = qtx.InsertEvent(r.Context(), db.InsertEventParams{Kind: todoEventKind, Body: "deleted: " + deleted.Body})
 		return err
 	})
 	if err != nil {
@@ -469,7 +480,7 @@ func validateTodoBody(body string) string {
 	body = strings.TrimSpace(body)
 	switch {
 	case body == "":
-		return "Todo body is required."
+		return todoBodyRequired
 	case utf8.RuneCountInString(body) > appmodel.MaxTodoBodyLength:
 		return fmt.Sprintf("Todo body must be %d characters or fewer.", appmodel.MaxTodoBodyLength)
 	default:

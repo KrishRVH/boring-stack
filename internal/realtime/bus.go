@@ -5,14 +5,17 @@ import (
 	"time"
 )
 
+// TopicTodosChanged broadcasts changes that require a fresh todo snapshot.
 const TopicTodosChanged = "todos.changed"
 
+// Event is an ephemeral message received from a Bus.
 type Event struct {
 	Topic string
 	Data  []byte
 	At    time.Time
 }
 
+// Bus publishes and subscribes to ephemeral application events.
 type Bus interface {
 	Name() string
 	Publish(ctx context.Context, topic string, data []byte) error

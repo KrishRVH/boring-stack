@@ -210,12 +210,12 @@ func newIntegrationApp(t *testing.T) (*App, func()) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	migrateServerTestDB(t, ctx, dbURL)
+	migrateServerTestDB(ctx, t, dbURL)
 	pool, err := pgxpool.New(ctx, dbURL)
 	if err != nil {
 		t.Fatal(err)
 	}
-	resetServerTestData(t, ctx, pool)
+	resetServerTestData(ctx, t, pool)
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	app := New(config.Config{Addr: ":0"}, logger, pool, realtime.NewMemoryBus(), nil)
@@ -228,7 +228,7 @@ func newIntegrationApp(t *testing.T) (*App, func()) {
 	return app, cleanup
 }
 
-func migrateServerTestDB(t *testing.T, ctx context.Context, dbURL string) {
+func migrateServerTestDB(ctx context.Context, t *testing.T, dbURL string) {
 	t.Helper()
 
 	sqlDB, err := sql.Open("pgx", dbURL)
@@ -246,7 +246,7 @@ func migrateServerTestDB(t *testing.T, ctx context.Context, dbURL string) {
 	}
 }
 
-func resetServerTestData(t *testing.T, ctx context.Context, pool *pgxpool.Pool) {
+func resetServerTestData(ctx context.Context, t *testing.T, pool *pgxpool.Pool) {
 	t.Helper()
 	if _, err := pool.Exec(ctx, `TRUNCATE todos, app_events RESTART IDENTITY CASCADE`); err != nil {
 		t.Fatal(err)

@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/a-h/templ"
@@ -36,11 +35,11 @@ func shortDateTime(t time.Time) string {
 
 func todoToggleLabel(todo appmodel.Todo) string {
 	if todo.Done {
-		return fmt.Sprintf("Reopen todo: %s", todo.Body)
+		return "Reopen todo: " + todo.Body
 	}
-	return fmt.Sprintf("Mark todo done: %s", todo.Body)
+	return "Mark todo done: " + todo.Body
 }
 
 func todoDeleteLabel(todo appmodel.Todo) string {
-	return fmt.Sprintf("Delete todo: %s", todo.Body)
+	return "Delete todo: " + todo.Body
 }

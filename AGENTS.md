@@ -48,23 +48,31 @@ Generated files are checked in so `go test ./...` works from a clean copy.
 
 ## Commands
 
+Use mise for developer tasks. Call the underlying tools directly only when
+fixing the corresponding mise task.
+
 - `mise run tasks`: list available tasks.
 - `mise run install`: install pinned tools, Go modules, and local browser assets.
+- `mise run lock`: refresh the committed `mise.lock` after tool-version changes.
 - `mise run tools`: check pinned codegen and local tooling versions.
 - `mise run doctor`: check local prerequisites and print exact fixes.
 - `mise run first-run`: set up tools, start services, migrate, and run the app.
-- `mise run fmt`: format Go and templ files.
-- `mise run fmt:check`: check Go and templ formatting.
-- `mise run lint`: run local Go static checks.
+- `mise run fmt`: format Go, templ, and shell files.
+- `mise run fmt:check`: check Go, templ, and shell formatting.
+- `mise run lint`: run Go and shell static checks.
+- `mise run standards`: apply safe standards formatting and module fixes.
+- `mise run standards:check`: run the full local CI-grade standards gate.
+- `mise run secrets`: scan the working tree for secrets.
+- `mise run sbom`: generate a CycloneDX JSON SBOM under `sbom/`.
 - `mise run vendor-js`: download pinned HTMX, SSE, and Alpine browser bundles.
 - `mise run tailwind`: install the pinned Tailwind standalone binary.
 - `mise run generate`: regenerate sqlc and templ output.
 - `mise run css`: rebuild embedded Tailwind CSS.
 - `mise run regenerate`: regenerate sqlc, templ, and checked-in CSS.
-- `mise run test`: run `go test ./...`.
+- `mise run test`: run Go and shell tests.
 - `mise run test-db`: run opt-in DB-backed integration tests against `TEST_DATABASE_URL`.
 - `mise run check`: run the normal local quality gate.
-- `mise run ci`: run the extended local quality gate.
+- `mise run ci`: alias the full standards gate.
 - `mise run dev`: regenerate, rebuild CSS, and run the server.
 - `mise run dev-css`: watch Tailwind CSS during UI work.
 - `mise run build`: build a local Linux server binary into `./bin`.
@@ -86,6 +94,7 @@ Generated files are checked in so `go test ./...` works from a clean copy.
 - Prefer integration tests at stable cut points over brittle unit tests.
 - Keep end-to-end tests small and important enough that they stay green.
 - Avoid mocks unless the real dependency is slow, flaky, external, or unsafe.
+- Before handoff, run `MISE_LOCKED=1 mise run standards:check` unless blocked.
 
 ## Frontend Bias
 
@@ -99,3 +108,9 @@ Generated files are checked in so `go test ./...` works from a clean copy.
 
 - Use the gstack `/browse` skill for browser-based verification and web browsing.
 - Never use `mcp__claude-in-chrome__*` tools.
+
+## Git
+
+- Do not revert user changes unless explicitly asked.
+- Keep generated and local-only files out of commits.
+- Use Conventional Commits for commit messages.

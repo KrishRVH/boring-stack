@@ -21,16 +21,18 @@ func main() {
 	cfg := config.Load()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: cfg.LogLevel}))
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
 
 	if err := migrateGoose(ctx, cfg.DBURL, logger); err != nil {
 		logger.Error("goose migration failed", "err", err)
+		cancel()
 		os.Exit(1)
 	}
 	if err := migrateRiver(ctx, cfg.DBURL, logger); err != nil {
 		logger.Error("river migration failed", "err", err)
+		cancel()
 		os.Exit(1)
 	}
+	cancel()
 }
 
 func migrateGoose(ctx context.Context, dbURL string, logger *slog.Logger) error {

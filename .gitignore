@@ -39,6 +39,7 @@ mise.*.local.lock
 /coverage/
 /dist/
 /out/
+/sbom/
 web/assets/css/app.css.map
 
 # Go

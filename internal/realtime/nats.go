@@ -14,11 +14,13 @@ const (
 	natsCloseTimeout = natsDrainTimeout + 6*time.Second
 )
 
+// NATSBus provides NATS-backed ephemeral event fanout.
 type NATSBus struct {
 	conn   *nats.Conn
 	closed <-chan struct{}
 }
 
+// NewNATSBus connects to NATS and builds a NATSBus.
 func NewNATSBus(url string) (*NATSBus, error) {
 	closed := make(chan struct{})
 	var closeOnce sync.Once
@@ -37,8 +39,10 @@ func NewNATSBus(url string) (*NATSBus, error) {
 	return &NATSBus{conn: conn, closed: closed}, nil
 }
 
+// Name returns the bus implementation name.
 func (b *NATSBus) Name() string { return "nats" }
 
+// Publish sends an event to NATS and waits for it to flush.
 func (b *NATSBus) Publish(ctx context.Context, topic string, data []byte) error {
 	if err := b.conn.Publish(topic, data); err != nil {
 		return err
@@ -46,6 +50,7 @@ func (b *NATSBus) Publish(ctx context.Context, topic string, data []byte) error 
 	return b.flush(ctx)
 }
 
+// Subscribe registers a NATS event subscriber.
 func (b *NATSBus) Subscribe(ctx context.Context, topic string) (<-chan Event, func(), error) {
 	ch := make(chan Event, 16)
 	done := make(chan struct{})
@@ -87,6 +92,7 @@ func (b *NATSBus) Subscribe(ctx context.Context, topic string) (<-chan Event, fu
 	return ch, unsubscribe, nil
 }
 
+// Close drains and closes the NATS connection.
 func (b *NATSBus) Close() error {
 	if err := b.conn.Drain(); err != nil {
 		if errors.Is(err, nats.ErrConnectionClosed) {

@@ -10,7 +10,7 @@ require_free_compose_ports
 
 if ! docker compose up -d postgres nats; then
   fail "Could not start Postgres and NATS."
-  cat >&2 <<'EOF'
+  cat >&2 << 'EOF'
 Try:
   mise exec -- docker compose ps
   mise exec -- docker compose logs postgres

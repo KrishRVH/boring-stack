@@ -15,9 +15,9 @@ fail() {
 }
 
 require_docker() {
-  if ! command -v docker >/dev/null 2>&1; then
+  if ! command -v docker > /dev/null 2>&1; then
     fail "Docker is not installed or not on PATH."
-    cat >&2 <<'EOF'
+    cat >&2 << 'EOF'
 Fix:
   Install Docker Desktop with WSL integration enabled, or install Docker Engine inside Linux.
   Then confirm:
@@ -27,9 +27,9 @@ EOF
     return 1
   fi
 
-  if ! docker version >/dev/null 2>&1; then
+  if ! docker version > /dev/null 2>&1; then
     fail "Docker is installed, but this shell cannot talk to the Docker daemon."
-    cat >&2 <<'EOF'
+    cat >&2 << 'EOF'
 Fix:
   Start Docker Desktop or the Docker service.
   On WSL, make sure Docker Desktop integration is enabled for this distro.
@@ -43,9 +43,9 @@ EOF
     return 1
   fi
 
-  if ! docker compose version >/dev/null 2>&1; then
+  if ! docker compose version > /dev/null 2>&1; then
     fail "Docker Compose v2 is not available."
-    cat >&2 <<'EOF'
+    cat >&2 << 'EOF'
 Fix:
   Install a recent Docker Desktop or Docker Engine package that includes `docker compose`.
   Then confirm:
@@ -67,6 +67,7 @@ go_toolchain_version() {
       go)
         version="$value"
         ;;
+      *) ;;
     esac
   done < "$PROJECT_ROOT/go.mod"
 
@@ -105,13 +106,13 @@ port_in_use() {
     return 1
   fi
 
-  if command -v ss >/dev/null 2>&1; then
+  if command -v ss > /dev/null 2>&1; then
     ss -ltn | awk '{print $4}' | grep -Eq "[:.]${port}$"
     return $?
   fi
 
-  if command -v lsof >/dev/null 2>&1; then
-    lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1
+  if command -v lsof > /dev/null 2>&1; then
+    lsof -nP -iTCP:"$port" -sTCP:LISTEN > /dev/null 2>&1
     return $?
   fi
 
@@ -122,16 +123,16 @@ port_owner() {
   local port="$1"
   local owner=""
 
-  if command -v docker >/dev/null 2>&1; then
-    owner="$(docker ps --format '{{.Names}} {{.Ports}}' 2>/dev/null | awk -v port="$port" '$0 ~ ":" port "->" {print}' | head -n 1 || true)"
+  if command -v docker > /dev/null 2>&1; then
+    owner="$(docker ps --format '{{.Names}} {{.Ports}}' 2> /dev/null | awk -v port="$port" '$0 ~ ":" port "->" {print}' | head -n 1 || true)"
     if [[ -n "$owner" ]]; then
       printf '%s\n' "$owner"
       return 0
     fi
   fi
 
-  if command -v lsof >/dev/null 2>&1; then
-    owner="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN 2>/dev/null | awk 'NR==2 {print $1 " pid=" $2}' || true)"
+  if command -v lsof > /dev/null 2>&1; then
+    owner="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN 2> /dev/null | awk 'NR==2 {print $1 " pid=" $2}' || true)"
     if [[ -n "$owner" ]]; then
       printf '%s\n' "$owner"
       return 0
@@ -151,18 +152,18 @@ require_free_app_port() {
   if port_in_use "$port"; then
     fail "Port $port is already in use."
     warn "Owner: $(port_owner "$port")"
-    cat >&2 <<EOF
+    cat >&2 << EOF
 Fix:
   Stop the process using the port, or run the app on another port:
     ADDR=:8081 mise run dev
 EOF
     return 1
-	fi
+  fi
 }
 
 compose_service_running() {
   local service="$1"
-  docker compose ps --status running --services 2>/dev/null | grep -qx "$service"
+  docker compose ps --status running --services 2> /dev/null | grep -qx "$service"
 }
 
 require_free_compose_port() {
@@ -197,7 +198,7 @@ require_free_compose_ports() {
   fi
 
   if [[ "$conflict" -ne 0 ]]; then
-    cat >&2 <<'EOF'
+    cat >&2 << 'EOF'
 Fix:
   Stop the process using the port, or stop this project's containers:
     mise run down

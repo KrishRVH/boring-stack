@@ -1,8 +1,19 @@
+min_version = "2026.6.12"
+
+[settings]
+lockfile = true
+
 [tools]
-go = "1.26.4"
+go = "1.26.5"
 gofumpt = "0.10.0"
 golangci-lint = "2.12.2"
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.4.0"
+"go:github.com/KrishRVH/boringlint/cmd/boringlint" = { version = "v0.2.1", depends = "go" }
+"go:golang.org/x/vuln/cmd/govulncheck" = { version = "1.4.0", depends = "go" }
+bats = "1.13.0"
+gitleaks = "8.30.1"
+shellcheck = "0.11.0"
+shfmt = "3.13.1"
+syft = "1.45.1"
 
 [env]
 _.file = ".env"
@@ -30,6 +41,10 @@ run = "mise tasks ls"
 description = "List project tasks."
 run = "mise tasks ls"
 
+[tasks.lock]
+description = "Refresh mise.lock after tool-version changes."
+run = "mise lock"
+
 [tasks.install]
 description = "Install the pinned toolchain, Go modules, and local browser assets."
 run = """
@@ -45,6 +60,22 @@ run = "mise run install"
 [tasks.doctor]
 description = "Check local prerequisites and explain exact fixes."
 run = "./scripts/doctor.sh"
+
+[tasks.secrets]
+description = "Scan the working tree for secrets."
+run = "gitleaks dir . --redact --no-banner"
+
+[tasks.sbom]
+description = "Generate a CycloneDX JSON SBOM for the project filesystem."
+run = """
+set -eu
+source_name="${SYFT_SOURCE_NAME:-$(basename "$PWD")}"
+source_version="${SYFT_SOURCE_VERSION:-0.0.0}"
+export SYFT_CHECK_FOR_APP_UPDATE="${SYFT_CHECK_FOR_APP_UPDATE:-false}"
+rm -rf sbom
+mkdir -p sbom
+syft scan dir:. --source-name "$source_name" --source-version "$source_version" --exclude ./sbom --exclude ./.git --output cyclonedx-json=sbom/sbom.cdx.json
+"""
 
 [tasks.tools]
 description = "Download Go modules and check pinned codegen tools."
@@ -148,8 +179,11 @@ description = "Build the distroless container image."
 run = "./scripts/docker_build.sh"
 
 [tasks.test]
-description = "Run Go tests."
-run = "mise run go:test"
+description = "Run project tests."
+run = """
+mise run go:test
+mise run shell:test
+"""
 
 [tasks.test-db]
 description = "Run opt-in DB-backed integration tests against TEST_DATABASE_URL."
@@ -162,22 +196,45 @@ go test -p 1 ./cmd/migrate ./internal/server -count=1
 """
 
 [tasks.fmt]
-description = "Format Go and templ files."
+description = "Format Go, templ, and shell files."
 run = """
 mise run go:fmt
 go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt .
+mise run shell:fmt
 """
 
 [tasks."fmt:check"]
-description = "Check Go and templ formatting."
+description = "Check Go, templ, and shell formatting."
 run = """
 mise run go:fmt:check
 go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt -fail .
+mise run shell:fmt:check
 """
 
 [tasks.lint]
-description = "Run the lightweight local Go static checks."
-run = "mise run go:lint"
+description = "Run project static analysis."
+run = """
+mise run go:lint
+mise run shell:lint
+"""
+
+[tasks.standards]
+description = "Run standards workflows and available autofixes."
+run = """
+mise run go:standards
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt .
+mise run shell:standards
+"""
+
+[tasks."standards:check"]
+description = "Run the full standards CI gate."
+run = """
+mise run secrets
+mise run go:standards:check
+go run github.com/a-h/templ/cmd/templ@$TEMPL_VERSION fmt -fail .
+mise run shell:standards:check
+./scripts/check_generated_drift.sh
+"""
 
 [tasks.verify]
 description = "Check generated files, checked-in assets, and tests."
@@ -195,12 +252,8 @@ mise run verify
 """
 
 [tasks.ci]
-description = "Run the extended local quality gate."
-run = """
-mise run check
-mise run vuln
-mise run test-race
-"""
+description = "Alias for the full standards CI gate."
+run = "mise run standards:check"
 
 [tasks."go:install"]
 description = "Download Go module dependencies."
@@ -209,67 +262,146 @@ run = "go mod download"
 [tasks."go:fmt"]
 description = "Format non-generated Go source."
 run = """
+set -eu
 tmp="$(mktemp)"
-trap 'rm -f "$tmp" "$tmp.all"' EXIT
+trap 'rm -f "$tmp"' EXIT
 
 if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git ls-files --cached --others --exclude-standard '*.go' > "$tmp.all"
+  git ls-files --cached --others --exclude-standard -z -- '*.go' |
+    xargs -0 sh -c 'for file do
+      [ -f "$file" ] || continue
+      file="${file#./}"
+      case "$file" in
+        internal/db/db.go|internal/db/models.go|internal/db/querier.go|internal/db/*.sql.go|internal/ui/*_templ.go) ;;
+        *) printf "%s\\0" "$file" ;;
+      esac
+    done' sh > "$tmp"
 else
-  find . -type d \\( -name .git -o -name .gstack -o -name vendor \\) -prune -o -type f -name '*.go' -print > "$tmp.all"
+  find . -type d \\( -name .git -o -name vendor -o -name .gstack \\) -prune \\
+    -o -type f -name '*.go' -print0 |
+    xargs -0 sh -c 'for file do
+      file="${file#./}"
+      case "$file" in
+        internal/db/db.go|internal/db/models.go|internal/db/querier.go|internal/db/*.sql.go|internal/ui/*_templ.go) ;;
+        *) printf "%s\\0" "$file" ;;
+      esac
+    done' sh > "$tmp"
 fi
 
-grep -Ev '(^internal/db/(db|models|querier|.*\\.sql)\\.go$|^internal/ui/.*_templ\\.go$)' "$tmp.all" > "$tmp" || true
-
 if [ -s "$tmp" ]; then
-  xargs gofumpt -w < "$tmp"
+  xargs -0 gofumpt -w < "$tmp"
 fi
 """
 
 [tasks."go:fmt:check"]
 description = "Check non-generated Go source formatting."
 run = """
+set -eu
 tmp="$(mktemp)"
-trap 'rm -f "$tmp" "$tmp.all"' EXIT
+trap 'rm -f "$tmp"' EXIT
 
 if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git ls-files --cached --others --exclude-standard '*.go' > "$tmp.all"
+  git ls-files --cached --others --exclude-standard -z -- '*.go' |
+    xargs -0 sh -c 'for file do
+      [ -f "$file" ] || continue
+      file="${file#./}"
+      case "$file" in
+        internal/db/db.go|internal/db/models.go|internal/db/querier.go|internal/db/*.sql.go|internal/ui/*_templ.go) ;;
+        *) printf "%s\\0" "$file" ;;
+      esac
+    done' sh > "$tmp"
 else
-  find . -type d \\( -name .git -o -name .gstack -o -name vendor \\) -prune -o -type f -name '*.go' -print > "$tmp.all"
+  find . -type d \\( -name .git -o -name vendor -o -name .gstack \\) -prune \\
+    -o -type f -name '*.go' -print0 |
+    xargs -0 sh -c 'for file do
+      file="${file#./}"
+      case "$file" in
+        internal/db/db.go|internal/db/models.go|internal/db/querier.go|internal/db/*.sql.go|internal/ui/*_templ.go) ;;
+        *) printf "%s\\0" "$file" ;;
+      esac
+    done' sh > "$tmp"
 fi
-
-grep -Ev '(^internal/db/(db|models|querier|.*\\.sql)\\.go$|^internal/ui/.*_templ\\.go$)' "$tmp.all" > "$tmp" || true
 
 if [ ! -s "$tmp" ]; then
   exit 0
 fi
 
-files="$(xargs gofumpt -l < "$tmp")"
+files="$(xargs -0 gofumpt -l < "$tmp")"
 if [ -n "$files" ]; then
   printf '%s\n' "$files"
   exit 1
 fi
 """
 
+[tasks."go:mod:tidy"]
+description = "Tidy Go module files."
+run = "go mod tidy"
+
 [tasks."go:mod:check"]
 description = "Check Go module tidiness."
+depends = ["go:install"]
 run = "go mod tidy -diff"
 
 [tasks."go:mod:verify"]
 description = "Verify downloaded Go modules."
+depends = ["go:install"]
 run = "go mod verify"
 
 [tasks."go:lint"]
-description = "Run local Go static analysis."
-run = """
-mise run go:mod:check
-mise run go:mod:verify
-go vet ./...
-golangci-lint run ./...
-"""
+description = "Run Go static analysis and dependency checks."
+depends = ["go:mod:check", "go:mod:verify"]
+run = [
+  "go vet ./...",
+  "boringlint ./...",
+  "golangci-lint run ./...",
+  "govulncheck -test ./...",
+]
 
 [tasks."go:test"]
 description = "Run Go tests."
+depends = ["go:install"]
 run = "go test -trimpath -count=1 ./..."
+
+[tasks."go:test:race"]
+description = "Run Go tests with the race detector."
+depends = ["go:install"]
+wait_for = ["go:test"]
+run = "go test -trimpath -race -count=1 ./..."
+
+[tasks."go:cover"]
+description = "Run Go tests with coverage."
+depends = ["go:install"]
+wait_for = ["go:test:race"]
+run = """
+set -eu
+mkdir -p coverage
+go test -trimpath -count=1 -coverpkg=./... -covermode=atomic -coverprofile=coverage/go.out ./...
+go tool cover -func=coverage/go.out
+min="${GO_COVER_MIN:-}"
+if [ -n "$min" ]; then
+  actual="$(go tool cover -func=coverage/go.out | awk '/^total:/ { sub(/%/, "", $3); print $3 }')"
+  awk -v actual="$actual" -v min="$min" 'BEGIN { exit(actual + 0 >= min + 0 ? 0 : 1) }' || {
+    echo "coverage ${actual}% is below required ${min}%"
+    exit 1
+  }
+fi
+"""
+
+[tasks."go:bench"]
+description = "Run Go benchmarks."
+depends = ["go:install"]
+run = "go test -trimpath -run=^$ -bench=. -benchmem ./..."
+
+[tasks."go:standards"]
+description = "Run the Go standards workflow with autofixes."
+run = [
+  { task = "go:fmt" },
+  { task = "go:mod:tidy" },
+]
+
+[tasks."go:standards:check"]
+description = "Run the Go standards CI gate."
+depends = ["go:fmt:check", "go:lint", "go:test", "go:test:race", "go:cover"]
 
 [tasks."go:check"]
 description = "Run Go formatting, linting, and tests."
@@ -280,20 +412,55 @@ mise run go:test
 """
 
 [tasks.vuln]
-description = "Run govulncheck explicitly; kept out of the normal local loop."
+description = "Run govulncheck explicitly."
 run = "govulncheck -test ./..."
 
 [tasks."test-race"]
-description = "Run Go tests with the race detector."
-run = "go test -trimpath -race -count=1 ./..."
+description = "Alias for go:test:race."
+run = "mise run go:test:race"
 
 [tasks.cover]
-description = "Run Go tests with a coverage report."
-run = """
-mkdir -p coverage
-go test -trimpath -count=1 -coverpkg=./... -covermode=atomic -coverprofile=coverage/go.out ./...
-go tool cover -func=coverage/go.out
-"""
+description = "Alias for go:cover."
+run = "mise run go:cover"
+
+[tasks."shell:run"]
+description = "Run a shell standards subcommand: fmt, fmt-check, lint, syntax, policy, or test."
+usage = "arg \"command\""
+run = "scripts/shell-standards.sh \"$usage_command\""
+
+[tasks."shell:fmt"]
+description = "Format shell scripts."
+run = "scripts/shell-standards.sh fmt"
+
+[tasks."shell:fmt:check"]
+description = "Check shell script formatting."
+run = "scripts/shell-standards.sh fmt-check"
+
+[tasks."shell:lint"]
+description = "Run shell static analysis, syntax checks, and shebang policy."
+wait_for = ["shell:fmt:check"]
+run = "scripts/shell-standards.sh lint"
+
+[tasks."shell:syntax"]
+description = "Run shell parser checks."
+run = "scripts/shell-standards.sh syntax"
+
+[tasks."shell:policy"]
+description = "Check shell glue-script shebang policy."
+run = "scripts/shell-standards.sh policy"
+
+[tasks."shell:test"]
+description = "Run Bats shell tests."
+wait_for = ["shell:fmt:check"]
+run = "scripts/shell-standards.sh test"
+
+[tasks."shell:standards"]
+description = "Run the shell standards workflow with autofixes."
+depends = ["shell:fmt"]
+
+[tasks."shell:standards:check"]
+description = "Run the shell standards CI gate."
+depends = ["shell:fmt:check", "shell:lint", "shell:test"]
 
 [tasks.reset-db]
 description = "Remove Docker volumes and start a clean database."

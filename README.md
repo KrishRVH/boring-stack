@@ -265,7 +265,9 @@ mise run dev            # regenerate, rebuild CSS, and run server
 mise run regenerate     # update sqlc, templ, and checked-in CSS
 mise run verify         # check generated files, assets, and tests
 mise run check          # normal local quality gate
-mise run ci             # extended gate: check + govulncheck + race tests
+mise run standards      # apply safe standards fixes
+mise run standards:check # full local CI-grade standards gate
+mise run ci             # alias for standards:check
 ```
 
 There is intentionally no Makefile. There are intentionally no package manager
@@ -425,7 +427,8 @@ The agent contract is practical:
 - avoid clever abstractions until the code earns them;
 - use `mise run doctor` before guessing at environment problems;
 - use `mise run regenerate` after SQL, templ, or CSS source edits;
-- use `mise run verify`, `mise run check`, or `mise run ci` depending on risk;
+- use `mise run verify`, `mise run check`, or `mise run standards:check`
+  depending on risk;
 - do not add GitHub workflows or Dagger unless explicitly asked.
 
 The repo also follows agent-friendly web guidance: server-rendered HTML preserves
@@ -462,26 +465,31 @@ For bigger changes:
 
 ```bash
 mise run check
-mise run ci
+MISE_LOCKED=1 mise run standards:check
 ```
 
-`check` is the day-to-day gate. `ci` is the heavier local gate with vulnerability
-and race checks. Keeping those separate is intentional. The repo favors a fast
-loop by default, with stricter tools available when the risk is higher.
+`check` is the day-to-day formatting, static-analysis, generated-output, and
+test gate. `standards:check` is the full locked gate; it also scans for secrets
+and runs race and coverage checks. `ci` is a short alias for that full gate.
 
 ## Commands
 
 ```bash
 mise run tasks          # list available tasks
 mise run install        # install pinned tools, Go modules, and browser assets
+mise run lock           # refresh the committed mise.lock
 mise run tools          # check pinned codegen and local tooling versions
 mise run doctor         # check local prerequisites and exact fixes
 mise run first-run      # setup, start services, migrate, and run the app
 mise run start          # alias for first-run
 mise run setup          # alias for install
-mise run fmt            # format Go and templ files
+mise run fmt            # format Go, templ, and shell files
 mise run fmt:check      # check formatting
-mise run lint           # Go static checks and module verification
+mise run lint           # Go and shell static checks, module and vulnerability checks
+mise run standards      # apply safe formatting and module fixes
+mise run standards:check # full CI-grade local gate
+mise run secrets        # scan the working tree for secrets
+mise run sbom           # write sbom/sbom.cdx.json
 mise run vendor-js      # download pinned HTMX, SSE, and Alpine bundles
 mise run tailwind       # install the pinned Tailwind standalone binary
 mise run up             # start Postgres and NATS
@@ -493,11 +501,11 @@ mise run regenerate     # generate plus CSS
 mise run dev            # regenerate, rebuild CSS, and run server
 mise run dev-css        # watch Tailwind CSS during UI work
 mise run build          # build a local Linux server binary into ./bin
-mise run test           # run Go tests
+mise run test           # run Go and shell tests
 mise run test-db        # run opt-in DB-backed integration tests
 mise run verify         # generated drift, asset checksum, and tests
 mise run check          # fmt check, lint, verify
-mise run ci             # check, govulncheck, race tests
+mise run ci             # alias for standards:check
 mise run go:check       # Go-only formatting, linting, and tests
 mise run vuln           # run govulncheck explicitly
 mise run test-race      # run Go tests with the race detector
@@ -532,6 +540,7 @@ web/assets              embedded CSS and vendored browser JS
 scripts                 mise task helpers
 AGENTS.md               project instructions for coding agents
 mise.toml               tool pins and task surface
+mise.lock               locked tool artifacts for supported platforms
 ```
 
 ## Version Pins
@@ -542,7 +551,7 @@ their build args from `mise run docker-build`; prefer that task over calling
 
 | Component | Version |
 |---|---:|
-| Go | 1.26.4 |
+| Go | 1.26.5 |
 | HTMX | 2.0.10 |
 | htmx-ext-sse | 2.2.4 |
 | Alpine.js | 3.15.12 |

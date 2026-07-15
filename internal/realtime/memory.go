@@ -6,17 +6,21 @@ import (
 	"time"
 )
 
+// MemoryBus provides in-process ephemeral event fanout.
 type MemoryBus struct {
 	mu          sync.RWMutex
 	subscribers map[string]map[chan Event]struct{}
 }
 
+// NewMemoryBus builds an empty MemoryBus.
 func NewMemoryBus() *MemoryBus {
 	return &MemoryBus{subscribers: make(map[string]map[chan Event]struct{})}
 }
 
+// Name returns the bus implementation name.
 func (b *MemoryBus) Name() string { return "memory" }
 
+// Publish sends an event to the current in-process subscribers.
 func (b *MemoryBus) Publish(_ context.Context, topic string, data []byte) error {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
@@ -32,6 +36,7 @@ func (b *MemoryBus) Publish(_ context.Context, topic string, data []byte) error 
 	return nil
 }
 
+// Subscribe registers an in-process event subscriber.
 func (b *MemoryBus) Subscribe(ctx context.Context, topic string) (<-chan Event, func(), error) {
 	ch := make(chan Event, 16)
 	done := make(chan struct{})
@@ -67,4 +72,5 @@ func (b *MemoryBus) Subscribe(ctx context.Context, topic string) (<-chan Event, 
 	return ch, unsubscribe, nil
 }
 
+// Close releases bus resources.
 func (b *MemoryBus) Close() error { return nil }
