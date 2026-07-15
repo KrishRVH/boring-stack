@@ -5,9 +5,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$PROJECT_ROOT/scripts/lib/dev.sh"
 cd "$PROJECT_ROOT"
 
-if ! ./scripts/wait_for_postgres.sh; then
-  exit 1
-fi
+./scripts/wait_for_postgres.sh
 
 if ! go run ./cmd/migrate; then
   fail "Migrations failed."

@@ -60,7 +60,7 @@ templ Home(vm appmodel.HomeView) {
 templ TopBar() {
 	<header class="sticky top-0 z-30 border-b border-white/10 bg-zinc-950/90 backdrop-blur">
 		<div class="mx-auto flex w-full max-w-[92rem] flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-			<a class="group inline-flex min-h-11 items-center gap-3 rounded-md text-white outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="/">
+			<a class="inline-flex min-h-11 items-center gap-3 rounded-md text-white outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-300/35" href="/">
 				<span class="flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/35 bg-emerald-300/10 font-mono text-sm font-bold text-emerald-100">BS</span>
 				<span>
 					<span class="block text-base font-semibold leading-5">Boring Stack</span>
@@ -165,7 +165,7 @@ templ TodosPanel(todos []appmodel.Todo, oob bool) {
 				<p class="mt-1 text-sm leading-6 text-zinc-400">Every row is rendered by Go after a Postgres round trip.</p>
 			</div>
 		</div>
-		<div class="mt-5 overflow-hidden rounded-lg border border-white/10" role="list">
+		<div class="mt-5 overflow-hidden rounded-lg border border-white/10" { attrIf(len(todos) > 0, "role", "list")... }>
 			if len(todos) == 0 {
 				<div class="bg-zinc-950/65 p-5 text-sm leading-6 text-zinc-400">No work items yet. Add one or load the sample plan.</div>
 			}

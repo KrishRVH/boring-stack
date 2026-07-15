@@ -140,7 +140,7 @@ func TopBar() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<header class=\"sticky top-0 z-30 border-b border-white/10 bg-zinc-950/90 backdrop-blur\"><div class=\"mx-auto flex w-full max-w-[92rem] flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8\"><a class=\"group inline-flex min-h-11 items-center gap-3 rounded-md text-white outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"/\"><span class=\"flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/35 bg-emerald-300/10 font-mono text-sm font-bold text-emerald-100\">BS</span> <span><span class=\"block text-base font-semibold leading-5\">Boring Stack</span> <span class=\"block text-xs font-medium text-zinc-400\">Production Go web starter</span></span></a><nav class=\"flex gap-2 overflow-x-auto whitespace-nowrap text-sm text-zinc-300\" aria-label=\"Showcase sections\"><a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#workbench\">Workbench</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#http\">HTTP</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#capabilities\">Capabilities</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#recipes\">Recipes</a></nav></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<header class=\"sticky top-0 z-30 border-b border-white/10 bg-zinc-950/90 backdrop-blur\"><div class=\"mx-auto flex w-full max-w-[92rem] flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8\"><a class=\"inline-flex min-h-11 items-center gap-3 rounded-md text-white outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"/\"><span class=\"flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/35 bg-emerald-300/10 font-mono text-sm font-bold text-emerald-100\">BS</span> <span><span class=\"block text-base font-semibold leading-5\">Boring Stack</span> <span class=\"block text-xs font-medium text-zinc-400\">Production Go web starter</span></span></a><nav class=\"flex gap-2 overflow-x-auto whitespace-nowrap text-sm text-zinc-300\" aria-label=\"Showcase sections\"><a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#workbench\">Workbench</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#http\">HTTP</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#capabilities\">Capabilities</a> <a class=\"inline-flex min-h-11 shrink-0 items-center rounded-md border border-white/10 px-3 py-2 font-medium transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-300/35\" href=\"#recipes\">Recipes</a></nav></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -479,12 +479,20 @@ func TodosPanel(todos []appmodel.Todo, oob bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "><div class=\"flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between\"><div><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300\">Database workflow</p><h2 id=\"todos-heading\" class=\"mt-2 text-lg font-semibold text-white\">Work items</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Every row is rendered by Go after a Postgres round trip.</p></div></div><div class=\"mt-5 overflow-hidden rounded-lg border border-white/10\" role=\"list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "><div class=\"flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between\"><div><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300\">Database workflow</p><h2 id=\"todos-heading\" class=\"mt-2 text-lg font-semibold text-white\">Work items</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Every row is rendered by Go after a Postgres round trip.</p></div></div><div class=\"mt-5 overflow-hidden rounded-lg border border-white/10\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, attrIf(len(todos) > 0, "role", "list"))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(todos) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"bg-zinc-950/65 p-5 text-sm leading-6 text-zinc-400\">No work items yet. Add one or load the sample plan.</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"bg-zinc-950/65 p-5 text-sm leading-6 text-zinc-400\">No work items yet. Add one or load the sample plan.</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -495,7 +503,7 @@ func TodosPanel(todos []appmodel.Todo, oob bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -524,22 +532,22 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<article class=\"grid gap-4 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center\" role=\"listitem\"><div class=\"min-w-0\"><div class=\"flex flex-wrap items-center gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<article class=\"grid gap-4 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center\" role=\"listitem\"><div class=\"min-w-0\"><div class=\"flex flex-wrap items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if todo.Done {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-xs font-semibold text-emerald-100\">Done</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-xs font-semibold text-emerald-100\">Done</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-xs font-semibold text-amber-100\">Open</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-xs font-semibold text-amber-100\">Open</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<p class=\"text-xs text-zinc-500\">created ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p class=\"text-xs text-zinc-500\">created ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -552,12 +560,12 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if todo.Done {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<p class=\"mt-2 break-words text-base font-medium leading-6 text-zinc-500 line-through\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<p class=\"mt-2 break-words text-base font-medium leading-6 text-zinc-500 line-through\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -570,12 +578,12 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<p class=\"mt-2 break-words text-base font-medium leading-6 text-white\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<p class=\"mt-2 break-words text-base font-medium leading-6 text-white\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -588,12 +596,12 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div><div class=\"grid grid-cols-2 gap-2 sm:flex sm:shrink-0\"><button class=\"min-h-11 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-100 focus-visible:ring-4 focus-visible:ring-emerald-300/25\" type=\"button\" hx-swap=\"none\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><div class=\"grid grid-cols-2 gap-2 sm:flex sm:shrink-0\"><button class=\"min-h-11 rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-emerald-300/70 hover:bg-emerald-300/10 hover:text-emerald-100 focus-visible:ring-4 focus-visible:ring-emerald-300/25\" type=\"button\" hx-swap=\"none\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -605,22 +613,22 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if todo.Done {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "Reopen")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "Reopen")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "Done")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "Done")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</button> <button class=\"min-h-11 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-semibold text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10 focus-visible:ring-4 focus-visible:ring-rose-300/25\" type=\"button\" hx-swap=\"none\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</button> <button class=\"min-h-11 rounded-md border border-rose-300/25 px-3 py-2 text-sm font-semibold text-rose-100 transition hover:border-rose-300/70 hover:bg-rose-300/10 focus-visible:ring-4 focus-visible:ring-rose-300/25\" type=\"button\" hx-swap=\"none\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -632,7 +640,7 @@ func TodoRow(todo appmodel.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, ">Delete</button></div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, ">Delete</button></div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -661,7 +669,7 @@ func EventsPanel(events []appmodel.Event, oob bool) templ.Component {
 			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<section id=\"events-panel\" class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"events-heading\" aria-live=\"polite\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<section id=\"events-panel\" class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"events-heading\" aria-live=\"polite\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -669,18 +677,18 @@ func EventsPanel(events []appmodel.Event, oob bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "><div><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-sky-300\">GET /stream</p><h2 id=\"events-heading\" class=\"mt-2 text-lg font-semibold text-white\">Event stream</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Handlers and jobs append events, then push one server snapshot.</p></div><div class=\"mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-1\"><button class=\"min-h-11 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200 focus-visible:ring-4 focus-visible:ring-lime-300/35\" type=\"button\" hx-post=\"/jobs/snapshot\" hx-target=\"#composer-panel\" hx-swap=\"outerHTML\">Run River job</button> <button class=\"min-h-11 w-full rounded-md border border-sky-300/45 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25\" type=\"button\" hx-post=\"/demo/pulse\" hx-target=\"#composer-panel\" hx-swap=\"outerHTML\">Broadcast pulse</button></div><div class=\"mt-5 space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "><div><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-sky-300\">GET /stream</p><h2 id=\"events-heading\" class=\"mt-2 text-lg font-semibold text-white\">Event stream</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Handlers and jobs append events, then push one server snapshot.</p></div><div class=\"mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-1\"><button class=\"min-h-11 w-full rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-lime-200 focus-visible:ring-4 focus-visible:ring-lime-300/35\" type=\"button\" hx-post=\"/jobs/snapshot\" hx-target=\"#composer-panel\" hx-swap=\"outerHTML\">Run River job</button> <button class=\"min-h-11 w-full rounded-md border border-sky-300/45 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25\" type=\"button\" hx-post=\"/demo/pulse\" hx-target=\"#composer-panel\" hx-swap=\"outerHTML\">Broadcast pulse</button></div><div class=\"mt-5 space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(events) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<p class=\"rounded-md border border-white/10 bg-zinc-950/65 p-4 text-sm leading-6 text-zinc-400\">No events yet. Create an item, run a job, or broadcast a pulse.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<p class=\"rounded-md border border-white/10 bg-zinc-950/65 p-4 text-sm leading-6 text-zinc-400\">No events yet. Create an item, run a job, or broadcast a pulse.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		for _, event := range events {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"rounded-md border border-white/10 bg-zinc-950/65 p-4\"><div class=\"flex items-center justify-between gap-3\"><p class=\"text-sm font-semibold text-sky-100\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div class=\"rounded-md border border-white/10 bg-zinc-950/65 p-4\"><div class=\"flex items-center justify-between gap-3\"><p class=\"text-sm font-semibold text-sky-100\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -693,7 +701,7 @@ func EventsPanel(events []appmodel.Event, oob bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</p><p class=\"font-mono text-xs text-zinc-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</p><p class=\"font-mono text-xs text-zinc-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -706,7 +714,7 @@ func EventsPanel(events []appmodel.Event, oob bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</p></div><p class=\"mt-2 break-words text-sm leading-6 text-zinc-300\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</p></div><p class=\"mt-2 break-words text-sm leading-6 text-zinc-300\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -719,12 +727,12 @@ func EventsPanel(events []appmodel.Event, oob bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -753,7 +761,7 @@ func AlpinePanel() templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<section id=\"alpine-panel\" class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"alpine-heading\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<section id=\"alpine-panel\" class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"alpine-heading\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -761,7 +769,7 @@ func AlpinePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300\">Alpine island</p><h2 id=\"alpine-heading\" class=\"mt-2 text-lg font-semibold text-white\">Local preferences</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Client-only state can sit beside server-owned data without a SPA.</p><div class=\"mt-4 rounded-lg border border-white/10 bg-zinc-950/65 p-4\"><div class=\"grid grid-cols-2 gap-3 text-sm\"><div><p class=\"text-zinc-400\">Preview clicks</p><p class=\"mt-1 font-mono text-3xl font-semibold text-white\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-emerald-300\">Alpine island</p><h2 id=\"alpine-heading\" class=\"mt-2 text-lg font-semibold text-white\">Local preferences</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">Client-only state can sit beside server-owned data without a SPA.</p><div class=\"mt-4 rounded-lg border border-white/10 bg-zinc-950/65 p-4\"><div class=\"grid grid-cols-2 gap-3 text-sm\"><div><p class=\"text-zinc-400\">Preview clicks</p><p class=\"mt-1 font-mono text-3xl font-semibold text-white\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -769,7 +777,7 @@ func AlpinePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, ">0</p></div><div><p class=\"text-zinc-400\">Density</p><p class=\"mt-2 font-semibold text-emerald-100\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, ">0</p></div><div><p class=\"text-zinc-400\">Density</p><p class=\"mt-2 font-semibold text-emerald-100\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -777,7 +785,7 @@ func AlpinePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, ">Compact</p></div></div><div class=\"mt-4 grid gap-2\"><button class=\"min-h-11 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200 focus-visible:ring-4 focus-visible:ring-white/25\" type=\"button\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, ">Compact</p></div></div><div class=\"mt-4 grid gap-2\"><button class=\"min-h-11 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200 focus-visible:ring-4 focus-visible:ring-white/25\" type=\"button\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -785,7 +793,7 @@ func AlpinePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, ">Increment preview</button><div class=\"grid grid-cols-2 gap-2\" role=\"group\" aria-label=\"Density\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, ">Increment preview</button><div class=\"grid grid-cols-2 gap-2\" role=\"group\" aria-label=\"Density\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -797,7 +805,7 @@ func AlpinePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</div></div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</div></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -826,7 +834,7 @@ func DensityButton(label string) templ.Component {
 			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<button class=\"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-emerald-300/70 hover:bg-emerald-300/10 focus-visible:ring-4 focus-visible:ring-emerald-300/25\" type=\"button\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<button class=\"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-emerald-300/70 hover:bg-emerald-300/10 focus-visible:ring-4 focus-visible:ring-emerald-300/25\" type=\"button\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -842,7 +850,7 @@ func DensityButton(label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -855,7 +863,7 @@ func DensityButton(label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -884,7 +892,7 @@ func HTTPContract() templ.Component {
 			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<section id=\"http\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"http-heading\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\"><div><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-emerald-300\">HTTP contract</p><h2 id=\"http-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Resources, methods, and responses stay obvious.</h2></div><p class=\"max-w-xl text-sm leading-6 text-zinc-400\">Forms keep normal browser semantics where practical. HTMX upgrades command buttons, partial swaps, and live updates without adding a frontend app.</p></div><div class=\"mt-5 overflow-hidden rounded-lg border border-white/10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<section id=\"http\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"http-heading\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\"><div><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-emerald-300\">HTTP contract</p><h2 id=\"http-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Resources, methods, and responses stay obvious.</h2></div><p class=\"max-w-xl text-sm leading-6 text-zinc-400\">Forms keep normal browser semantics where practical. HTMX upgrades command buttons, partial swaps, and live updates without adding a frontend app.</p></div><div class=\"mt-5 overflow-hidden rounded-lg border border-white/10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -908,7 +916,7 @@ func HTTPContract() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -937,7 +945,7 @@ func RouteRow(method string, route string, title string, body string) templ.Comp
 			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<article class=\"grid gap-2 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 lg:grid-cols-[5rem_minmax(9rem,13rem)_minmax(0,1fr)] lg:items-start\"><p class=\"font-mono text-sm font-bold text-emerald-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<article class=\"grid gap-2 border-b border-white/10 bg-zinc-950/55 p-4 last:border-b-0 lg:grid-cols-[5rem_minmax(9rem,13rem)_minmax(0,1fr)] lg:items-start\"><p class=\"font-mono text-sm font-bold text-emerald-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -950,7 +958,7 @@ func RouteRow(method string, route string, title string, body string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</p><p class=\"break-words font-mono text-sm text-zinc-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</p><p class=\"break-words font-mono text-sm text-zinc-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -963,7 +971,7 @@ func RouteRow(method string, route string, title string, body string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</p><div><h3 class=\"font-semibold text-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</p><div><h3 class=\"font-semibold text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -976,7 +984,7 @@ func RouteRow(method string, route string, title string, body string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</h3><p class=\"mt-1 text-sm leading-6 text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</h3><p class=\"mt-1 text-sm leading-6 text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -989,7 +997,7 @@ func RouteRow(method string, route string, title string, body string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</p></div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "</p></div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1018,7 +1026,7 @@ func CapabilityGrid() templ.Component {
 			templ_7745c5c3_Var33 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<section id=\"capabilities\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"capabilities-heading\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\"><div><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-amber-300\">Production capabilities</p><h2 id=\"capabilities-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Enough machinery for complex apps, kept small enough to trace.</h2></div><p class=\"max-w-xl text-sm leading-6 text-zinc-400\">Each row points at checked-in code. No invisible platform layer, no hidden frontend build.</p></div><div class=\"mt-5 divide-y divide-white/10 rounded-lg border border-white/10 bg-zinc-950/55\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<section id=\"capabilities\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"capabilities-heading\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\"><div><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-amber-300\">Production capabilities</p><h2 id=\"capabilities-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Enough machinery for complex apps, kept small enough to trace.</h2></div><p class=\"max-w-xl text-sm leading-6 text-zinc-400\">Each row points at checked-in code. No invisible platform layer, no hidden frontend build.</p></div><div class=\"mt-5 divide-y divide-white/10 rounded-lg border border-white/10 bg-zinc-950/55\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1046,7 +1054,7 @@ func CapabilityGrid() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1075,7 +1083,7 @@ func CapabilityRow(title string, body string, proof string) templ.Component {
 			templ_7745c5c3_Var34 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<article class=\"grid gap-2 p-4 md:grid-cols-[minmax(10rem,0.26fr)_minmax(0,1fr)_minmax(12rem,0.32fr)] md:items-center\"><h3 class=\"font-semibold text-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<article class=\"grid gap-2 p-4 md:grid-cols-[minmax(10rem,0.26fr)_minmax(0,1fr)_minmax(12rem,0.32fr)] md:items-center\"><h3 class=\"font-semibold text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1088,7 +1096,7 @@ func CapabilityRow(title string, body string, proof string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "</h3><p class=\"text-sm leading-6 text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</h3><p class=\"text-sm leading-6 text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1101,7 +1109,7 @@ func CapabilityRow(title string, body string, proof string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</p><p class=\"break-words rounded-md bg-white/5 px-3 py-2 font-mono text-xs text-zinc-300\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</p><p class=\"break-words rounded-md bg-white/5 px-3 py-2 font-mono text-xs text-zinc-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1114,7 +1122,7 @@ func CapabilityRow(title string, body string, proof string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</p></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1143,7 +1151,7 @@ func RecipeBoard() templ.Component {
 			templ_7745c5c3_Var38 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<section id=\"recipes\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"recipes-heading\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "<section id=\"recipes\" class=\"scroll-mt-24 rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"recipes-heading\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1151,7 +1159,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-sky-300\">App shapes</p><h2 id=\"recipes-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">The same primitives cover product surfaces that usually drift into complexity.</h2><div class=\"mt-5 flex flex-wrap gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-sky-300\">App shapes</p><h2 id=\"recipes-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">The same primitives cover product surfaces that usually drift into complexity.</h2><div class=\"mt-5 flex flex-wrap gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1171,7 +1179,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "</div><div class=\"mt-5\"><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "</div><div class=\"mt-5\"><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1179,7 +1187,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1187,7 +1195,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1195,7 +1203,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 82, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1203,7 +1211,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 82, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1211,7 +1219,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1219,7 +1227,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "</div><div class=\"rounded-lg border border-white/10 bg-zinc-950/60 p-5\" style=\"display: none;\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1227,7 +1235,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1235,7 +1243,7 @@ func RecipeBoard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, "</div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "</div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1264,7 +1272,7 @@ func RecipeButton(key string, label string) templ.Component {
 			templ_7745c5c3_Var39 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "<button class=\"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-sky-300 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25\" type=\"button\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "<button class=\"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition hover:border-sky-300 hover:bg-sky-300/10 focus-visible:ring-4 focus-visible:ring-sky-300/25\" type=\"button\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1280,7 +1288,7 @@ func RecipeButton(key string, label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 89, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1293,7 +1301,7 @@ func RecipeButton(key string, label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 89, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 90, "</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1322,7 +1330,7 @@ func RecipeContent(title string, surface string, system string, path string) tem
 			templ_7745c5c3_Var41 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 90, "<div class=\"grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.36fr)]\"><div><h3 class=\"text-xl font-semibold text-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 91, "<div class=\"grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.36fr)]\"><div><h3 class=\"text-xl font-semibold text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1335,7 +1343,7 @@ func RecipeContent(title string, surface string, system string, path string) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 91, "</h3><dl class=\"mt-4 space-y-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 92, "</h3><dl class=\"mt-4 space-y-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1347,7 +1355,7 @@ func RecipeContent(title string, surface string, system string, path string) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 92, "</dl></div><div class=\"rounded-lg border border-sky-300/20 bg-sky-300/10 p-4\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-sky-200\">Path</p><p class=\"mt-3 break-words font-mono text-sm leading-6 text-sky-50\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 93, "</dl></div><div class=\"rounded-lg border border-sky-300/20 bg-sky-300/10 p-4\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-sky-200\">Path</p><p class=\"mt-3 break-words font-mono text-sm leading-6 text-sky-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1360,7 +1368,7 @@ func RecipeContent(title string, surface string, system string, path string) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 93, "</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 94, "</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1389,7 +1397,7 @@ func RecipeDetail(label string, body string) templ.Component {
 			templ_7745c5c3_Var44 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 94, "<div><dt class=\"text-sm font-semibold text-zinc-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 95, "<div><dt class=\"text-sm font-semibold text-zinc-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1402,7 +1410,7 @@ func RecipeDetail(label string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 95, "</dt><dd class=\"mt-1 text-sm leading-6 text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 96, "</dt><dd class=\"mt-1 text-sm leading-6 text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1415,7 +1423,7 @@ func RecipeDetail(label string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 96, "</dd></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 97, "</dd></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1444,7 +1452,7 @@ func StackFlow() templ.Component {
 			templ_7745c5c3_Var47 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 97, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"flow-heading\"><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-rose-300\">Request lifecycle</p><h2 id=\"flow-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Trace a browser action all the way back to the browser.</h2><ol class=\"mt-5 grid gap-3 md:grid-cols-5\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 98, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/75 p-5\" aria-labelledby=\"flow-heading\"><p class=\"text-sm font-semibold uppercase tracking-[0.16em] text-rose-300\">Request lifecycle</p><h2 id=\"flow-heading\" class=\"mt-2 text-2xl font-semibold text-white text-balance\">Trace a browser action all the way back to the browser.</h2><ol class=\"mt-5 grid gap-3 md:grid-cols-5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1468,7 +1476,7 @@ func StackFlow() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 98, "</ol></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 99, "</ol></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1497,7 +1505,7 @@ func FlowStep(number string, title string, body string) templ.Component {
 			templ_7745c5c3_Var48 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 99, "<li class=\"min-h-40 rounded-lg border border-white/10 bg-zinc-950/60 p-4\"><p class=\"flex h-9 w-9 items-center justify-center rounded-md bg-rose-300 font-mono text-sm font-bold text-zinc-950\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 100, "<li class=\"min-h-40 rounded-lg border border-white/10 bg-zinc-950/60 p-4\"><p class=\"flex h-9 w-9 items-center justify-center rounded-md bg-rose-300 font-mono text-sm font-bold text-zinc-950\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1510,7 +1518,7 @@ func FlowStep(number string, title string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 100, "</p><h3 class=\"mt-4 font-semibold text-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 101, "</p><h3 class=\"mt-4 font-semibold text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1523,7 +1531,7 @@ func FlowStep(number string, title string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 101, "</h3><p class=\"mt-2 text-sm leading-6 text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 102, "</h3><p class=\"mt-2 text-sm leading-6 text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1536,7 +1544,7 @@ func FlowStep(number string, title string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 102, "</p></li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 103, "</p></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1565,7 +1573,7 @@ func CommandCenter() templ.Component {
 			templ_7745c5c3_Var52 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 103, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"commands-heading\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-amber-300\">Local loop</p><h2 id=\"commands-heading\" class=\"mt-2 text-lg font-semibold text-white\">Quality gates</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">The command surface stays local, explicit, and easy to run in CI.</p><div class=\"mt-4 space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 104, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"commands-heading\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-amber-300\">Local loop</p><h2 id=\"commands-heading\" class=\"mt-2 text-lg font-semibold text-white\">Quality gates</h2><p class=\"mt-1 text-sm leading-6 text-zinc-400\">The command surface stays local, explicit, and easy to run in CI.</p><div class=\"mt-4 space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1585,7 +1593,7 @@ func CommandCenter() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 104, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 105, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1614,7 +1622,7 @@ func CommandRow(command string, body string) templ.Component {
 			templ_7745c5c3_Var53 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 105, "<div class=\"rounded-md border border-white/10 bg-zinc-950/65 p-3\"><p class=\"break-words font-mono text-sm text-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 106, "<div class=\"rounded-md border border-white/10 bg-zinc-950/65 p-3\"><p class=\"break-words font-mono text-sm text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1627,7 +1635,7 @@ func CommandRow(command string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 106, "</p><p class=\"mt-1 text-xs leading-5 text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 107, "</p><p class=\"mt-1 text-xs leading-5 text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1640,7 +1648,7 @@ func CommandRow(command string, body string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 107, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1669,7 +1677,7 @@ func VersionPanel(v appmodel.VersionInfo) templ.Component {
 			templ_7745c5c3_Var56 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"versions-heading\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500\">Pinned stack</p><h2 id=\"versions-heading\" class=\"mt-2 text-lg font-semibold text-white\">Versions</h2><dl class=\"mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 109, "<section class=\"rounded-lg border border-white/10 bg-zinc-900/80 p-5 shadow-xl shadow-black/20\" aria-labelledby=\"versions-heading\"><p class=\"text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500\">Pinned stack</p><h2 id=\"versions-heading\" class=\"mt-2 text-lg font-semibold text-white\">Versions</h2><dl class=\"mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1717,7 +1725,7 @@ func VersionPanel(v appmodel.VersionInfo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 109, "</dl></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 110, "</dl></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1746,7 +1754,7 @@ func VersionRow(name string, value string) templ.Component {
 			templ_7745c5c3_Var57 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 110, "<dt class=\"text-zinc-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 111, "<dt class=\"text-zinc-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1759,7 +1767,7 @@ func VersionRow(name string, value string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 111, "</dt><dd class=\"break-words font-mono text-zinc-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 112, "</dt><dd class=\"break-words font-mono text-zinc-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1772,7 +1780,7 @@ func VersionRow(name string, value string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 112, "</dd>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 113, "</dd>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

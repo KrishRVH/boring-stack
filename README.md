@@ -123,8 +123,8 @@ the repo a single static binary, fast tests, a strong standard library, simple
 concurrency, and predictable deployment. Agents also handle Go well because the
 language has fewer hidden runtime conventions than many web stacks.
 
-This repo pins Go in `go.mod` and `mise.toml`. The `toolchain` line is the
-source of truth for Docker builds, local tooling, and doctor checks.
+This repo pins Go in `go.mod` and `mise.toml`. Keep the pins in sync; Docker
+builds and doctor checks read the `toolchain` line from `go.mod`.
 
 ### `net/http.ServeMux`
 
@@ -313,7 +313,7 @@ internal/db/*.go
 ```
 
 Edit SQL, run `mise run regenerate`, and commit both the SQL and generated Go.
-Do not hand-edit generated sqlc files except `internal/db/doc.go`.
+Do not hand-edit `internal/db/*.go` except `internal/db/doc.go`.
 
 ### Goose
 
@@ -567,10 +567,10 @@ their build args from `mise run docker-build`; prefer that task over calling
 
 ## Editing Rules
 
-- Edit SQL in `internal/db/query/*.sql`, then run `mise run regenerate`.
+- Edit SQL in `internal/db/query/*.sql` or migrations, then run `mise run regenerate`.
 - Edit templ components in `internal/ui/*.templ`, then run `mise run regenerate`.
 - Edit Tailwind sources or classes, then run `mise run regenerate`.
-- Do not hand-edit generated sqlc files except `internal/db/doc.go`.
+- Do not hand-edit `internal/db/*.go` except `internal/db/doc.go`.
 - Do not hand-edit `internal/ui/*_templ.go`.
 - Keep HTMX and Alpine behavior near the markup that uses it.
 - Treat every browser-submitted value as client-controlled.

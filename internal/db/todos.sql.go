@@ -17,8 +17,8 @@ FROM todos
 `
 
 type CountTodosRow struct {
-	Total int64 `json:"total"`
-	Done  int64 `json:"done"`
+	Total int64
+	Done  int64
 }
 
 func (q *Queries) CountTodos(ctx context.Context) (CountTodosRow, error) {
@@ -73,8 +73,8 @@ RETURNING id, kind, body, created_at
 `
 
 type InsertEventParams struct {
-	Kind string `json:"kind"`
-	Body string `json:"body"`
+	Kind string
+	Body string
 }
 
 func (q *Queries) InsertEvent(ctx context.Context, arg InsertEventParams) (AppEvent, error) {

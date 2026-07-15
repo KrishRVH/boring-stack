@@ -21,6 +21,7 @@ mise.local.toml
 mise.*.local.toml
 .mise.local.toml
 .mise.*.local.toml
+
 mise.local.lock
 mise.*.local.lock
 .mise.local.lock
@@ -28,6 +29,7 @@ mise.*.local.lock
 
 # Logs and temporary files
 *.log
+
 *.tmp
 *.temp
 /.tmp/

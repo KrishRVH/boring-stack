@@ -10,13 +10,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/KrishRVH/boring-stack/internal/config"
 	"github.com/KrishRVH/boring-stack/internal/realtime"
 )
 
 func TestNewWiresSecurityHeaders(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	app := New(config.Config{Addr: "127.0.0.1:0"}, logger, nil, realtime.NewMemoryBus(), nil)
+	app := New("127.0.0.1:0", logger, nil, realtime.NewMemoryBus(), nil)
 
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequestWithContext(context.Background(), http.MethodGet, "/healthz", nil)
@@ -36,13 +35,13 @@ func TestSecurityHeadersAreSet(t *testing.T) {
 	handler.ServeHTTP(rec, req)
 
 	headers := rec.Result().Header
-	assertHeader(t, headers, "X-Content-Type-Options", "nosniff")
-	assertHeader(t, headers, "X-Frame-Options", "DENY")
-	assertHeader(t, headers, "X-XSS-Protection", "0")
-	assertHeader(t, headers, "Referrer-Policy", "strict-origin-when-cross-origin")
 	assertHeader(t, headers, "Cross-Origin-Opener-Policy", "same-origin")
 	assertHeader(t, headers, "Cross-Origin-Resource-Policy", "same-origin")
 	assertHeader(t, headers, "Origin-Agent-Cluster", "?1")
+	assertHeader(t, headers, "Referrer-Policy", "strict-origin-when-cross-origin")
+	assertHeader(t, headers, "X-Content-Type-Options", "nosniff")
+	assertHeader(t, headers, "X-Frame-Options", "DENY")
+	assertHeader(t, headers, "X-XSS-Protection", "0")
 
 	csp := headers.Get("Content-Security-Policy")
 	for _, want := range []string{

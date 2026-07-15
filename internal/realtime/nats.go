@@ -11,6 +11,7 @@ import (
 
 const (
 	natsDrainTimeout = 2 * time.Second
+	// nats.go may spend five seconds flushing publishers after subscriptions drain; leave one second for closure.
 	natsCloseTimeout = natsDrainTimeout + 6*time.Second
 )
 
@@ -55,7 +56,7 @@ func (b *NATSBus) Subscribe(ctx context.Context, topic string) (<-chan Event, fu
 	ch := make(chan Event, 16)
 	done := make(chan struct{})
 	sub, err := b.conn.Subscribe(topic, func(msg *nats.Msg) {
-		event := Event{Topic: msg.Subject, Data: append([]byte(nil), msg.Data...), At: time.Now()}
+		event := Event{Topic: msg.Subject, Data: append([]byte(nil), msg.Data...)}
 		select {
 		case <-done:
 			return

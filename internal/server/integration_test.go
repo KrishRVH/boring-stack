@@ -20,7 +20,6 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 
-	"github.com/KrishRVH/boring-stack/internal/config"
 	"github.com/KrishRVH/boring-stack/internal/db"
 	"github.com/KrishRVH/boring-stack/internal/db/migrations"
 	"github.com/KrishRVH/boring-stack/internal/realtime"
@@ -218,7 +217,7 @@ func newIntegrationApp(t *testing.T) (*App, func()) {
 	resetServerTestData(ctx, t, pool)
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	app := New(config.Config{Addr: ":0"}, logger, pool, realtime.NewMemoryBus(), nil)
+	app := New(":0", logger, pool, realtime.NewMemoryBus(), nil)
 	cleanup := func() {
 		cleanupCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()

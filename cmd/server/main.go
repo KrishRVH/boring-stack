@@ -39,8 +39,7 @@ func main() {
 	}()
 
 	workers := river.NewWorkers()
-	queries := db.New(pool)
-	river.AddWorker(workers, jobs.NewSnapshotWorker(queries, bus, logger))
+	river.AddWorker(workers, jobs.NewSnapshotWorker(db.New(pool), bus, logger))
 
 	riverClient, err := river.NewClient(riverpgxv5.New(pool), &river.Config{
 		Logger: logger,
@@ -59,7 +58,7 @@ func main() {
 		}
 	}()
 
-	app := server.New(cfg, logger, pool, bus, riverClient)
+	app := server.New(cfg.Addr, logger, pool, bus, riverClient)
 
 	errCh := make(chan error, 1)
 	go func() { errCh <- app.ListenAndServe() }()
@@ -76,12 +75,12 @@ func main() {
 
 func buildBus(logger *slog.Logger, cfg config.Config) realtime.Bus {
 	switch cfg.Bus {
+	case "memory":
+		return realtime.NewMemoryBus()
 	case "nats":
 		bus, err := realtime.NewNATSBus(cfg.NATSURL)
 		must(logger, err, "connect NATS")
 		return bus
-	case "memory":
-		return realtime.NewMemoryBus()
 	default:
 		must(logger, fmt.Errorf("unknown BUS %q", cfg.Bus), "configure bus")
 		return nil

@@ -1,9 +1,6 @@
 package realtime
 
-import (
-	"context"
-	"time"
-)
+import "context"
 
 // TopicTodosChanged broadcasts changes that require a fresh todo snapshot.
 const TopicTodosChanged = "todos.changed"
@@ -12,7 +9,6 @@ const TopicTodosChanged = "todos.changed"
 type Event struct {
 	Topic string
 	Data  []byte
-	At    time.Time
 }
 
 // Bus publishes and subscribes to ephemeral application events.

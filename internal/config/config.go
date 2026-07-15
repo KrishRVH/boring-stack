@@ -9,7 +9,6 @@ import (
 // Config contains the application's runtime configuration.
 type Config struct {
 	Addr     string
-	AppEnv   string
 	LogLevel slog.Level
 	DBURL    string
 	Bus      string
@@ -20,7 +19,6 @@ type Config struct {
 func Load() Config {
 	return Config{
 		Addr:     env("ADDR", ":8080"),
-		AppEnv:   env("APP_ENV", "dev"),
 		LogLevel: parseLevel(env("LOG_LEVEL", "info")),
 		DBURL:    env("DB_URL", "postgres://app:app@localhost:"+env("POSTGRES_PORT", "5432")+"/app?sslmode=disable"),
 		Bus:      strings.ToLower(env("BUS", "memory")),

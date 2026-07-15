@@ -10,18 +10,9 @@ project_files() {
     git ls-files -co --exclude-standard
   else
     find . \
-      -type d \( -name .cache -o -name .elixir_ls -o -name .git \
-      -o -name .godot -o -name .gradle -o -name .kotlin \
-      -o -name .lua-language-server -o -name .lua_modules \
-      -o -name .next -o -name .nuxt -o -name .phpstan.cache \
-      -o -name .phpunit.cache -o -name .stack-work -o -name .svelte-kit \
-      -o -name .turbo -o -name .venv -o -name .vite -o -name .zig-cache \
-      -o -name __pycache__ -o -name _build -o -name build \
-      -o -name coverage -o -name deps -o -name dist -o -name dist-newstyle \
-      -o -name node_modules -o -name obj -o -name out -o -name sbom \
-      -o -name target -o -name vendor -o -name zig-cache \
-      -o -name zig-out -o -name zig-pkg \
-      -o -path '*/bin/Debug' -o -path '*/bin/Release' \) -prune \
+      -type d \( -name .git -o -name bin -o -name coverage \
+      -o -name dist -o -name out -o -name sbom -o -name tmp \
+      -o -name vendor \) -prune \
       -o -type f -print | sed 's#^./##'
   fi
 }

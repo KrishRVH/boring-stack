@@ -19,8 +19,8 @@ const (
 		"media-src 'self'; " +
 		"manifest-src 'self'; " +
 		"worker-src 'none'"
-	strictTransportSecurity = "max-age=63072000; includeSubDomains"
 	permissionsPolicy       = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+	strictTransportSecurity = "max-age=63072000; includeSubDomains"
 )
 
 func (a *App) securityHeaders(next http.Handler) http.Handler {

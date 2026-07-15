@@ -21,7 +21,6 @@ import (
 	"github.com/riverqueue/river"
 
 	"github.com/KrishRVH/boring-stack/internal/appmodel"
-	"github.com/KrishRVH/boring-stack/internal/config"
 	"github.com/KrishRVH/boring-stack/internal/db"
 	"github.com/KrishRVH/boring-stack/internal/jobs"
 	"github.com/KrishRVH/boring-stack/internal/realtime"
@@ -31,7 +30,6 @@ import (
 
 // App serves the HTTP application.
 type App struct {
-	cfg    config.Config
 	log    *slog.Logger
 	pool   *pgxpool.Pool
 	q      *db.Queries
@@ -51,10 +49,9 @@ const (
 )
 
 // New builds an App and registers its routes.
-func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtime.Bus, riverClient *river.Client[pgx.Tx]) *App {
+func New(addr string, logger *slog.Logger, pool *pgxpool.Pool, bus realtime.Bus, riverClient *river.Client[pgx.Tx]) *App {
 	streamShutdown, stopStreams := context.WithCancel(context.Background())
 	app := &App{
-		cfg:            cfg,
 		log:            logger,
 		pool:           pool,
 		q:              db.New(pool),
@@ -66,7 +63,7 @@ func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtim
 	}
 	app.routes()
 	app.server = &http.Server{
-		Addr:              cfg.Addr,
+		Addr:              addr,
 		Handler:           app.requestLogger(app.securityHeaders(app.mux)),
 		ReadHeaderTimeout: 5 * time.Second,
 		IdleTimeout:       90 * time.Second,
@@ -76,7 +73,7 @@ func New(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, bus realtim
 
 // ListenAndServe starts the HTTP server.
 func (a *App) ListenAndServe() error {
-	a.log.Info("server listening", "addr", a.cfg.Addr, "bus", a.bus.Name())
+	a.log.Info("server listening", "addr", a.server.Addr, "bus", a.bus.Name())
 	if err := a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
@@ -341,14 +338,12 @@ func (a *App) broadcastPulse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) seedShowcase(w http.ResponseWriter, r *http.Request) {
-	missing := showcaseSeedItems
-
 	err := a.withTx(r.Context(), func(qtx *db.Queries) error {
 		todos, err := qtx.ListTodos(r.Context())
 		if err != nil {
 			return err
 		}
-		missing = missingShowcaseSeedItems(todos)
+		missing := missingShowcaseSeedItems(todos)
 
 		for _, item := range missing {
 			if _, err := qtx.CreateTodo(r.Context(), item); err != nil {
@@ -537,12 +532,10 @@ func (a *App) viewModel(ctx context.Context) (appmodel.HomeView, error) {
 			Body:      todo.Body,
 			Done:      todo.Done,
 			CreatedAt: todo.CreatedAt,
-			UpdatedAt: todo.UpdatedAt,
 		})
 	}
 	for _, event := range events {
 		vm.Events = append(vm.Events, appmodel.Event{
-			ID:        event.ID,
 			Kind:      event.Kind,
 			Body:      event.Body,
 			CreatedAt: event.CreatedAt,

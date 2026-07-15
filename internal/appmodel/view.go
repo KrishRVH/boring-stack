@@ -11,12 +11,10 @@ type Todo struct {
 	Body      string
 	Done      bool
 	CreatedAt time.Time
-	UpdatedAt time.Time
 }
 
 // Event is an application event rendered by the UI.
 type Event struct {
-	ID        int64
 	Kind      string
 	Body      string
 	CreatedAt time.Time

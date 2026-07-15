@@ -73,6 +73,18 @@ func TestSnapshotPanelsRenderOOBSwaps(t *testing.T) {
 	}
 }
 
+func TestTodosPanelOnlyUsesListSemanticsForRows(t *testing.T) {
+	withRows := render(t, TodosPanel([]appmodel.Todo{{ID: "todo-1", Body: "ship it"}}, false))
+	if !strings.Contains(withRows, `role="list"`) {
+		t.Fatal("todos panel with rows missing list semantics")
+	}
+
+	empty := render(t, TodosPanel(nil, false))
+	if strings.Contains(empty, `role="list"`) {
+		t.Fatal("empty todos panel exposes list semantics without list items")
+	}
+}
+
 func render(t *testing.T, components ...templ.Component) string {
 	t.Helper()
 

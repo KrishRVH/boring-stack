@@ -9,16 +9,16 @@ import (
 )
 
 type AppEvent struct {
-	ID        int64     `json:"id"`
-	Kind      string    `json:"kind"`
-	Body      string    `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int64
+	Kind      string
+	Body      string
+	CreatedAt time.Time
 }
 
 type Todo struct {
-	ID        string    `json:"id"`
-	Body      string    `json:"body"`
-	Done      bool      `json:"done"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        string
+	Body      string
+	Done      bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

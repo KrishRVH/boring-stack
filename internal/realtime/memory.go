@@ -3,7 +3,6 @@ package realtime
 import (
 	"context"
 	"sync"
-	"time"
 )
 
 // MemoryBus provides in-process ephemeral event fanout.
@@ -25,7 +24,7 @@ func (b *MemoryBus) Publish(_ context.Context, topic string, data []byte) error 
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 
-	event := Event{Topic: topic, Data: append([]byte(nil), data...), At: time.Now()}
+	event := Event{Topic: topic, Data: append([]byte(nil), data...)}
 	for ch := range b.subscribers[topic] {
 		select {
 		case ch <- event:
